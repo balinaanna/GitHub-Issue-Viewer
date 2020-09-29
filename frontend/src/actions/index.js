@@ -10,18 +10,24 @@ const list = {
   1: {
     id: 1,
     name: "Repo 1",
+    full_name: "annabalina/Repo 1",
+    description: "Your awesome repository",
     private: false,
     url: "http://github.com/"
   },
   2: {
     id: 2,
     name: "Repo 2",
+    full_name: "annabalina/Repo 2",
+    description: "Your awesome repository",
     private: false,
     url: "http://github.com/"
   },
   3: {
     id: 3,
     name: "Repo 3",
+    full_name: "annabalina/Repo 3",
+    description: "Your awesome repository",
     private: false,
     url: "http://github.com/"
   }
@@ -30,15 +36,27 @@ const list = {
 const issues = {
   1: {
     id: 1,
-    name: "Issue 1"
+    title: "Issue 1",
+    number: 2208,
+    author: "octocat",
+    created_at: new Date("2020-09-29T13:33:48Z"),
+    body: "I'm having a problem with this."
   },
   2: {
     id: 2,
-    name: "Issue 2"
+    title: "Issue 2",
+    number: 2208,
+    author: "octocat",
+    created_at: new Date("2020-08-22T13:33:48Z"),
+    body: "I'm having a problem with this."
   },
   3: {
     id: 3,
-    name: "Issue 3"
+    title: "Issue 3",
+    number: 2208,
+    author: "octocat",
+    created_at: new Date("2011-04-22T13:33:48Z"),
+    body: "I'm having a problem with this."
   }
 };
 

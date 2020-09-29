@@ -1,16 +1,23 @@
 import React from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Redirect } from 'react-router-dom';
+import Header from './Header';
 import RepositoriesList from './RepositoriesList';
 import Repository from './Repository';
 import Issue from './Issue';
+import '../App.css';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Route path="/" exact component={RepositoriesList} />
-      <Route path="/repository/:id" component={Repository} />
-      <Route path="/issue/:id" component={Issue} />
-    </BrowserRouter>
+    <div className='ui container'>
+      <BrowserRouter>
+        <Header />
+        <Route exact path='/' component={RepositoriesList} />
+        <Route path='/repositories/:id' component={Repository} />
+        <Route path='/issues/:id' component={Issue} />
+
+        <Route path='*' render={() => <Redirect to='/' />} />
+      </BrowserRouter>
+    </div>
   );
 }
 

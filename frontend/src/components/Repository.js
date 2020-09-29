@@ -2,11 +2,22 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { fetchRepository, fetchRepositoryIssues } from '../actions';
+import IssueAuthor from './IssueAuthor';
 
 class Repository extends React.Component {
   componentDidMount() {
     this.props.fetchRepository(this.props.match.params.id);
     this.props.fetchRepositoryIssues(this.props.match.params.id);
+  }
+
+  renderNavigation() {
+    return (
+      <div className="ui breadcrumb">
+        <Link to='/' className='section'>Home</Link>
+        <div className="divider">/</div>
+        <div className="active section" className='active section'>{ this.props.repository.name }</div>
+      </div>
+    );
   }
 
   renderIssues() {
@@ -16,9 +27,16 @@ class Repository extends React.Component {
 
     return this.props.issues.map(issue => {
       return (
-         <Link to={`/issue/${issue.id}`} key={issue.id}>
-          {issue.name}
-        </Link>
+
+        <div role="listitem" className="item" key={issue.id}>
+          <i aria-hidden="true" className="warning circle large icon middle aligned"></i>
+          <Link to={ `/issues/${issue.id}` } className='content'>
+            <div className='header'>{ issue.title }</div>
+            <div className='description'>
+              #{ issue.number } <IssueAuthor issue={ issue } />
+            </div>
+          </Link>
+        </div>
       );
     });
   }
@@ -29,10 +47,12 @@ class Repository extends React.Component {
     }
 
     return (
-      <div>
-        <div>{ `Repo id: ${this.props.repository.id}`}</div>
+      <div className='ui container page-wrapper'>
+        { this.renderNavigation() }
 
-        { this.renderIssues() }
+        <div role="list" className="ui divided relaxed list">
+          { this.renderIssues() }
+        </div>
       </div>
     );
   }
