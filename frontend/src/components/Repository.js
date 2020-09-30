@@ -6,8 +6,10 @@ import IssueAuthor from './IssueAuthor';
 
 class Repository extends React.Component {
   componentDidMount() {
-    this.props.fetchRepository(this.props.match.params.id);
-    this.props.fetchRepositoryIssues(this.props.match.params.id);
+    const { repo_owner, repo_name } = this.props.match.params;
+
+    this.props.fetchRepository(repo_owner, repo_name);
+    this.props.fetchRepositoryIssues(repo_owner, repo_name);
   }
 
   renderNavigation() {
@@ -15,22 +17,17 @@ class Repository extends React.Component {
       <div className="ui breadcrumb">
         <Link to='/' className='section'>Home</Link>
         <div className="divider">/</div>
-        <div className="active section" className='active section'>{ this.props.repository.name }</div>
+        <div className="active section" className='active section'>{ this.props.repo.name }</div>
       </div>
     );
   }
 
-  renderIssues() {
-    if (!this.props.issues) {
-      return null;
-    }
-
-    return this.props.issues.map(issue => {
+  renderIssues(repo, issues) {
+    return issues.map(issue => {
       return (
-
         <div role="listitem" className="item" key={issue.id}>
           <i aria-hidden="true" className="warning circle large icon middle aligned"></i>
-          <Link to={ `/issues/${issue.id}` } className='content'>
+          <Link to={ `/${repo.owner}/${repo.name}/issues/${issue.number}` } className='content'>
             <div className='header'>{ issue.title }</div>
             <div className='description'>
               #{ issue.number } <IssueAuthor issue={ issue } />
@@ -42,16 +39,15 @@ class Repository extends React.Component {
   }
 
   render() {
-    if (!this.props.repository) {
-      return null;
-    }
+    const { repo, issues } = this.props;
+    if (!repo || !issues) { return null; }
 
     return (
       <div className='ui container page-wrapper'>
         { this.renderNavigation() }
 
         <div role="list" className="ui divided relaxed list">
-          { this.renderIssues() }
+          { this.renderIssues(repo, issues) }
         </div>
       </div>
     );
@@ -59,9 +55,13 @@ class Repository extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
+  const { repo_owner, repo_name } = ownProps.match.params;
+  const repo = state.repositories[`${repo_owner}/${repo_name}`];
+  const issues = state.issues[`${repo_owner}/${repo_name}`];
+
   return {
-    repository: state.repositories[ownProps.match.params.id],
-    issues: Object.values(state.issues)
+    repo,
+    issues: issues ? Object.values(issues) : undefined
   }
 }
 

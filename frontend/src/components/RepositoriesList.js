@@ -17,11 +17,11 @@ class RepositoriesList extends React.Component {
   }
 
   renderRepositories() {
-    return this.props.repositories.map(repo => {
+    return this.props.repos.map(repo => {
       return (
         <div role="listitem" className="item" key={repo.id}>
           <i aria-hidden="true" className="github large icon middle aligned"></i>
-          <Link to={ `/repositories/${repo.id}` } className='content'>
+          <Link to={ `/${repo.owner}/${repo.name}` } className='content'>
             <div className='header'>{ repo.full_name }</div>
             <div className='description'>{ repo.description }</div>
           </Link>
@@ -44,7 +44,7 @@ class RepositoriesList extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    repositories: Object.values(state.repositories)
+    repos: Object.values(state.repositories)
   }
 }
 
