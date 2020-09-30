@@ -14,7 +14,7 @@ export default (state = {}, action) => {
 
       updatedRepoIssues = Object.assign(
         {},
-        ...action.payload.issues.map(issue => { return { [issue.number]: issue } })
+        ...action.payload.issues.map(issue => { return { [issue.number]: mapIssue(issue) } })
       );
 
       return Object.assign(
@@ -31,7 +31,7 @@ export default (state = {}, action) => {
       updatedRepoIssues = Object.assign(
         {},
         state[repo_id],
-        { [number]: action.payload.issue}
+        { [number]: mapIssue(action.payload.issue) }
       );
 
       return Object.assign(
@@ -42,4 +42,16 @@ export default (state = {}, action) => {
     default:
       return state;
   }
+}
+
+function mapIssue(issue) {
+  return {
+    id: issue.id,
+    title: issue.title,
+    number: issue.number,
+    author: issue.author,
+    created_at: new Date(issue.created_at),
+    body: issue.body,
+    state: issue.state
+  };
 }
