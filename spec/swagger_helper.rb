@@ -22,6 +22,37 @@ RSpec.configure do |config|
         version: 'v1'
       },
       paths: {},
+      components: {
+        schemas: {
+          repo: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              name: { type: :string },
+              full_name: { type: :string },
+              private: { type: :boolean },
+              url: { type: :string, format: :url },
+              description: { type: :string, nullable: true },
+              owner: { type: :string },
+              created_at: { type: :string, format: 'date-time' }
+            },
+            required: %w[id name full_name private url description owner created_at]
+          },
+          issue: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              title: { type: :string },
+              number: { type: :integer },
+              author: { type: :string },
+              body: { type: :string },
+              state: { type: :string },
+              created_at: { type: :string, format: 'date-time' }
+            },
+            required: %w[id title number author body state created_at]
+          }
+        }
+      },
       securitySchemes: {
         jwt: {
           type: :http,
