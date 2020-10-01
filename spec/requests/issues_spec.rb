@@ -1,6 +1,8 @@
 require 'swagger_helper'
 
 describe 'Issues API' do
+  before { stub_github_api }
+
   let(:owner) { 'rspec' }
   let(:repo)  { 'rspec' }
 

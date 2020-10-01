@@ -1,6 +1,8 @@
 require 'swagger_helper'
 
 describe 'Repos API' do
+  before { stub_github_api }
+
   path '/repos' do
     get 'Retrieves a list of available GitHub repos' do
       tags 'Repos'
