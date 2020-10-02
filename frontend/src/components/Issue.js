@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 import { fetchIssue, fetchRepository } from '../actions';
 import IssueAuthor from './IssueAuthor';
 
@@ -50,7 +51,7 @@ class Issue extends React.Component {
 
         <div className='ui divider'></div>
 
-        <div>{ issue.body }</div>
+        <ReactMarkdown source={ issue.body } />
       </div>
     );
   }
