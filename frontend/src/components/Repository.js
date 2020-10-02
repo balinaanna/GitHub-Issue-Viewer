@@ -63,6 +63,10 @@ class Repository extends React.Component {
   }
 
   renderIssues(repo, issues) {
+    if (issues.length == 0 && !this.state.canLoadMore) {
+      return <div class='ui very padded segment'>There aren't any issues.</div>;
+    }
+
     return this.userIssues(issues).map(issue => {
       return (
         <div role="listitem" className="item" key={issue.id}>

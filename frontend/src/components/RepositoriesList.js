@@ -53,7 +53,13 @@ class RepositoriesList extends React.Component {
   }
 
   renderRepositories() {
-    return this.userRepos().map(repo => {
+    const repos = this.userRepos();
+
+    if (repos.length == 0 && !this.state.canLoadMore) {
+      return <div class='ui very padded segment'>There aren't any repositories.</div>;
+    }
+
+    return repos.map(repo => {
       return (
         <div role="listitem" className="item" key={repo.id}>
           <i aria-hidden="true" className="github large icon"></i>
