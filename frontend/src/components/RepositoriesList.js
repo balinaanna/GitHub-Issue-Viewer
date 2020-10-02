@@ -35,6 +35,7 @@ class RepositoriesList extends React.Component {
   renderRepositories() {
     return this.props.repos
       .filter(issue => { return issue.is_listable; })
+      .sort((i1, i2) => i2.created_at - i1.created_at)
       .map(repo => {
         return (
           <div role="listitem" className="item" key={repo.id}>
