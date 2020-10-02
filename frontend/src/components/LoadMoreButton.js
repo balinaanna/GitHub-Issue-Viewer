@@ -1,20 +1,25 @@
 import React from 'react';
-import ReactLoading from 'react-loading';
 
 export default function LoadMoreButton(props) {
   if (!props.canLoadMore) { return null };
 
   if (props.isLoading) {
-     return (
-       <div className='loading-indicator'>
-         <ReactLoading type='bars' color='#ccc' className='loading' />
-       </div>
-     );
+    return (
+      <div className='load-more'>
+        <div className='ui icon message'>
+          <i className='circle notched loading icon'></i>
+          <div class='content'>
+            <div class='header'>Just one second</div>
+            We are fetching that content for you.
+          </div>
+        </div>
+     </div>
+    );
   }
 
   return (
     <div className='load-more'>
-      <button className='ui basic fluid button' onClick={ props.onClick }>
+      <button className='ui basic grey fluid button' onClick={ props.onClick }>
         Load More
       </button>
     </div>
