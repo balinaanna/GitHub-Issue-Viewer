@@ -35,6 +35,6 @@ function mapRepo(repo) {
     description: repo.description,
     owner: repo.owner,
     has_issues: repo.has_issues,
-    created_at: repo.created_at
+    created_at: new Date(repo.created_at)
   };
 }

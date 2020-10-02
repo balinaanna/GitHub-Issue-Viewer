@@ -1,21 +1,41 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import * as Dispatch from 'redux';
 import { fetchRepositories } from '../actions';
 import LoadMoreButton from './LoadMoreButton';
 import { PER_PAGE } from '../utils/constants';
 
 class RepositoriesList extends React.Component {
-  state = { page: 1 };
+  state = {
+    page: 0,
+    isLoading: false,
+    canLoadMore: true
+  };
 
   componentDidMount() {
-    const repos_count = this.props.repos.length;
+    const repos_count = this.props.repos.filter(issue => { return issue.is_listable; }).length;
     if (repos_count < PER_PAGE) {
-      this.props.fetchRepositories(this.state.page);
+      this.loadMore();
     } else {
       const page = parseInt(repos_count / PER_PAGE);
       this.setState({ page });
     }
+  }
+
+  loadMore = () => {
+    this.setState({ isLoading: true });
+
+    this.props.fetchRepositories(
+      this.state.page + 1,
+
+      (canLoadMore) => { this.setState(state => {
+        const page = state.page + 1;
+        return { isLoading: false, canLoadMore, page };
+      })},
+
+      () => { this.setState({isLoading: false}); }
+    );
   }
 
   renderNavigation() {
@@ -24,12 +44,6 @@ class RepositoriesList extends React.Component {
         <div className='section active'>Home</div>
       </div>
     );
-  }
-
-  loadMore = () => {
-    const page = this.state.page + 1;
-    this.setState( { page });
-    this.props.fetchRepositories(page);
   }
 
   renderRepositories() {
@@ -67,7 +81,11 @@ class RepositoriesList extends React.Component {
           { this.renderNavigation() }
           { this.renderRepositories() }
         </div>
-        <LoadMoreButton onClick={this.loadMore} />
+        <LoadMoreButton
+          onClick={this.loadMore}
+          isLoading={this.state.isLoading}
+          canLoadMore={ this.state.canLoadMore }
+        />
       </div>
     );
   }

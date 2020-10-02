@@ -7,7 +7,7 @@ import {
 import { api } from '../utils/api';
 import { PER_PAGE } from '../utils/constants';
 
-export const fetchRepositories = (page = 1) => async dispatch => {
+export const fetchRepositories = (page = 1, successCallback, errorCallback) => async dispatch => {
   const response = await api.get('/repos', {
     params: {
       page,
@@ -20,6 +20,10 @@ export const fetchRepositories = (page = 1) => async dispatch => {
       repos: response.data
     }
   });
+
+  const canLoadMore = response.data.length >= PER_PAGE;
+  successCallback(canLoadMore);
+  // errorCallback();
 }
 
 export const fetchRepository = (owner, name) => async dispatch => {
@@ -30,7 +34,7 @@ export const fetchRepository = (owner, name) => async dispatch => {
   });
 }
 
-export const fetchRepositoryIssues = (repo_owner, repo_name, page = 1) => async dispatch => {
+export const fetchRepositoryIssues = (repo_owner, repo_name, page = 1, successCallback, errorCallback) => async dispatch => {
   const response = await api.get(`/repos/${repo_owner}/${repo_name}/issues`, {
     params: {
       page,
@@ -46,6 +50,10 @@ export const fetchRepositoryIssues = (repo_owner, repo_name, page = 1) => async 
       repo_name
     }
   });
+
+  const canLoadMore = response.data.length >= PER_PAGE;
+  successCallback(canLoadMore);
+  // errorCallback();
 }
 
 export const fetchIssue = (repo_owner, repo_name, number) => async dispatch => {

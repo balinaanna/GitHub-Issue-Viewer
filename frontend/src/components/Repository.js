@@ -7,7 +7,11 @@ import LoadMoreButton from './LoadMoreButton';
 import { PER_PAGE } from '../utils/constants';
 
 class Repository extends React.Component {
-  state = { page: 1 };
+  state = {
+    page: 0,
+    isLoading: false,
+    canLoadMore: true
+  };
 
   componentDidMount() {
     const { repo_owner, repo_name } = this.props.match.params;
@@ -17,12 +21,29 @@ class Repository extends React.Component {
     }
 
     if (this.props.issues && this.props.issues.length >= PER_PAGE) {
-      const issues_count = this.props.issues.length;
+      const issues_count = this.props.issues.filter(issue => { return issue.is_listable; }).length;
       const page = parseInt(issues_count / PER_PAGE);
       this.setState({ page });
     } else {
-      this.props.fetchRepositoryIssues(repo_owner, repo_name, this.state.page);
+      this.loadMore(repo_owner, repo_name);
     }
+  }
+
+  loadMore = (repo_owner, repo_name) => {
+    this.setState({ isLoading: true });
+
+    this.props.fetchRepositoryIssues(
+      repo_owner,
+      repo_name,
+      this.state.page + 1,
+
+      (canLoadMore) => { this.setState(state => {
+        const page = state.page + 1;
+        return { isLoading: false, canLoadMore, page };
+      })},
+
+      () => { this.setState({isLoading: false}); }
+    );
   }
 
   renderNavigation() {
@@ -33,12 +54,6 @@ class Repository extends React.Component {
         <div className="active section" className='active section'>{ this.props.repo.name }</div>
       </div>
     );
-  }
-
-  loadMore = (repo) => {
-    const page = this.state.page + 1;
-    this.setState( { page });
-    this.props.fetchRepositoryIssues(repo.owner, repo.name, page);
   }
 
   renderIssues(repo, issues) {
@@ -72,7 +87,11 @@ class Repository extends React.Component {
           { this.renderIssues(repo, issues) }
         </div>
 
-        <LoadMoreButton onClick={() => this.loadMore(repo) } />
+        <LoadMoreButton
+          onClick={ () => this.loadMore(repo.owner, repo.name) }
+          isLoading={ this.state.isLoading }
+          canLoadMore={ this.state.canLoadMore }
+        />
       </div>
     );
   }
