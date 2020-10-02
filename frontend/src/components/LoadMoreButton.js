@@ -8,8 +8,8 @@ export default function LoadMoreButton(props) {
       <div className='load-more'>
         <div className='ui icon message'>
           <i className='circle notched loading icon'></i>
-          <div class='content'>
-            <div class='header'>Just one second</div>
+          <div className='content'>
+            <div className='header'>Just one second</div>
             We are fetching that content for you.
           </div>
         </div>

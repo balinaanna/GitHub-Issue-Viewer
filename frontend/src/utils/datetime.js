@@ -27,11 +27,11 @@ export const formatDateTime = (date) => {
   const day = date.getDate();
   const month = date.getMonth();
   const year = date.getFullYear();
-  const now = new Date;
+  const now = new Date();
 
   let formattedDate = `${day} ${months[month]}`;
 
-  formattedDate += now.getFullYear() != date.getFullYear()
+  formattedDate += now.getFullYear() !== date.getFullYear()
     ? ` ${year}`
     : (isSameDay(date, now) ? `, ${formatTime(date)}` : '');
 

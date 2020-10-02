@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import * as Dispatch from 'redux';
 import { fetchRepositories } from '../actions';
 import LoadMoreButton from './LoadMoreButton';
 import { PER_PAGE } from '../utils/constants';
@@ -55,8 +54,8 @@ class RepositoriesList extends React.Component {
   renderRepositories() {
     const repos = this.userRepos();
 
-    if (repos.length == 0 && !this.state.canLoadMore) {
-      return <div class='ui very padded segment'>There aren't any repositories.</div>;
+    if (repos.length === 0 && !this.state.canLoadMore) {
+      return <div className='ui very padded segment'>There aren't any repositories.</div>;
     }
 
     return repos.map(repo => {

@@ -18,15 +18,15 @@ class Issue extends React.Component {
   }
 
   renderNavigation() {
-    const { repo, issue } = this.props;
+    const { repo_owner, repo_name, number } = this.props.match.params;
 
     return (
       <div className="ui breadcrumb">
         <Link to='/' className='section'>Home</Link>
         <div className="divider">/</div>
-        <Link to={ `/${repo.owner}/${repo.name}` } className='section'>{repo.name}</Link>
+        <Link to={ `/${repo_owner}/${repo_name}` } className='section'>{repo_name}</Link>
         <div className="divider">/</div>
-        <div className="active section">#{ this.props.issue.number }</div>
+        <div className="active section">#{ number }</div>
       </div>
     );
   }

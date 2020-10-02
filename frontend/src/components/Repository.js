@@ -57,14 +57,14 @@ class Repository extends React.Component {
       <div className="ui breadcrumb">
         <Link to='/' className='section'>Home</Link>
         <div className="divider">/</div>
-        <div className="active section" className='active section'>{ this.props.repo.name }</div>
+        <div className='active section'>{ this.props.repo.name }</div>
       </div>
     );
   }
 
   renderIssues(repo, issues) {
-    if (issues.length == 0 && !this.state.canLoadMore) {
-      return <div class='ui very padded segment'>There aren't any issues.</div>;
+    if (issues.length === 0 && !this.state.canLoadMore) {
+      return <div className='ui very padded segment'>There aren't any issues.</div>;
     }
 
     return this.userIssues(issues).map(issue => {
