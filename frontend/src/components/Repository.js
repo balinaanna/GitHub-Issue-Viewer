@@ -48,8 +48,8 @@ class Repository extends React.Component {
 
   userIssues(issues) {
     return issues
-      .filter(issue => { return issue.is_listable; })
-      .sort((i1, i2) => i2.created_at - i1.created_at);
+      .filter(issue => { return issue.isListable; })
+      .sort((i1, i2) => i2.createdAt - i1.createdAt);
   }
 
   renderNavigation() {

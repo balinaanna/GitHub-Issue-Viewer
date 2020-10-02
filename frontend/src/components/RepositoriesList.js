@@ -40,8 +40,8 @@ class RepositoriesList extends React.Component {
 
   userRepos() {
     return this.props.repos
-      .filter(issue => { return issue.is_listable; })
-      .sort((i1, i2) => i2.created_at - i1.created_at);
+      .filter(issue => { return issue.isListable; })
+      .sort((i1, i2) => i2.createdAt - i1.createdAt);
   }
 
   renderNavigation() {
@@ -66,10 +66,10 @@ class RepositoriesList extends React.Component {
           <Link to={ `/${repo.owner}/${repo.name}` } className='content'>
             <div className='header'>
               <span style={{marginRight: '1em', wordBreak: 'break-all'}}>
-                { repo.full_name }
+                { repo.fullName }
               </span>
 
-              { repo.private ?
+              { repo.isPrivate ?
                   <span className='ui horizontal label'>
                     Private
                   </span>

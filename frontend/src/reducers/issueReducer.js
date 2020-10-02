@@ -17,7 +17,7 @@ export default (state = {}, action) => {
         state[repo_id],
         ...action.payload.issues.map(issue => {
           let mappedIssue = mapIssue(issue);
-          mappedIssue.is_listable = true;
+          mappedIssue.isListable = true;
           return { [issue.number]: mappedIssue }
         })
       );
@@ -34,7 +34,7 @@ export default (state = {}, action) => {
       repo_id = `${repo_owner}/${repo_name}`;
 
       let mappedIssue = mapIssue(action.payload.issue);
-      mappedIssue.is_listable = false;
+      mappedIssue.isListable = false;
 
       updatedRepoIssues = Object.assign(
         {},
@@ -58,7 +58,7 @@ function mapIssue(issue) {
     title: issue.title,
     number: issue.number,
     author: issue.author,
-    created_at: new Date(issue.created_at),
+    createdAt: new Date(issue.created_at),
     body: issue.body,
     state: issue.state
   };
