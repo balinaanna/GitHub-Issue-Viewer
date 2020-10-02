@@ -1,3 +1,13 @@
 .page-wrapper {
-  padding-top: 7em;
+  padding: 5em 0;
+}
+.ui.breadcrumb {
+  margin-bottom: 3em;
+}
+.page-wrapper .ui.pagination {
+  margin-top: 3em;
+}
+.load-more {
+  max-width: 400px;
+  margin: 0 auto;
 }

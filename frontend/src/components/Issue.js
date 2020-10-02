@@ -6,10 +6,14 @@ import IssueAuthor from './IssueAuthor';
 
 class Issue extends React.Component {
   componentDidMount() {
-    const { repo_owner, repo_name, number } = this.props.match.params;
+    if (!this.props.repo) {
+      const { repo_owner, repo_name, number } = this.props.match.params;
+      this.props.fetchRepository(repo_owner, repo_name);
 
-    this.props.fetchRepository(repo_owner, repo_name);
-    this.props.fetchIssue(repo_owner, repo_name, number);
+      if (!this.props.issue) {
+        this.props.fetchIssue(repo_owner, repo_name, number);
+      }
+    }
   }
 
   renderNavigation() {
@@ -19,7 +23,7 @@ class Issue extends React.Component {
       <div className="ui breadcrumb">
         <Link to='/' className='section'>Home</Link>
         <div className="divider">/</div>
-        <Link to={ `/${repo.owner}/${repo.name}` } className='section'>Repo name</Link>
+        <Link to={ `/${repo.owner}/${repo.name}` } className='section'>{repo.name}</Link>
         <div className="divider">/</div>
         <div className="active section">#{ this.props.issue.number }</div>
       </div>
@@ -54,8 +58,10 @@ class Issue extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   const { repo_owner, repo_name, number } = ownProps.match.params;
-  const repo = state.repositories[`${repo_owner}/${repo_name}`];
-  const issues = state.issues[`${repo_owner}/${repo_name}`];
+  const repo_id = `${repo_owner}/${repo_name}`;
+
+  const repo = state.repositories[repo_id];
+  const issues = state.issues[repo_id];
   const issue = issues ? issues[number] : undefined;
 
   return { repo, issue }

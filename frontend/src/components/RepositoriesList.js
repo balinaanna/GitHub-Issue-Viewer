@@ -2,10 +2,20 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { fetchRepositories } from '../actions';
+import LoadMoreButton from './LoadMoreButton';
+import { PER_PAGE } from '../utils/constants';
 
 class RepositoriesList extends React.Component {
+  state = { page: 1 };
+
   componentDidMount() {
-    this.props.fetchRepositories();
+    const repos_count = this.props.repos.length;
+    if (repos_count < PER_PAGE) {
+      this.props.fetchRepositories(this.state.page);
+    } else {
+      const page = parseInt(repos_count / PER_PAGE);
+      this.setState({ page });
+    }
   }
 
   renderNavigation() {
@@ -16,38 +26,47 @@ class RepositoriesList extends React.Component {
     );
   }
 
-  renderRepositories() {
-    return this.props.repos.map(repo => {
-      return (
-        <div role="listitem" className="item" key={repo.id}>
-          <i aria-hidden="true" className="github large icon"></i>
-          <Link to={ `/${repo.owner}/${repo.name}` } className='content'>
-            <div className='header'>
-              <span style={{marginRight: '1em', wordBreak: 'break-all'}}>
-                { repo.full_name }
-              </span>
+  loadMore = () => {
+    const page = this.state.page + 1;
+    this.setState( { page });
+    this.props.fetchRepositories(page);
+  }
 
-              { repo.private ?
-                  <span className='ui horizontal label'>
-                    Private
-                  </span>
-                : null
-              }
-            </div>
-            <div className='description'>{ repo.description }</div>
-          </Link>
-        </div>
-      );
-    });
+  renderRepositories() {
+    return this.props.repos
+      .filter(issue => { return issue.is_listable; })
+      .map(repo => {
+        return (
+          <div role="listitem" className="item" key={repo.id}>
+            <i aria-hidden="true" className="github large icon"></i>
+            <Link to={ `/${repo.owner}/${repo.name}` } className='content'>
+              <div className='header'>
+                <span style={{marginRight: '1em', wordBreak: 'break-all'}}>
+                  { repo.full_name }
+                </span>
+
+                { repo.private ?
+                    <span className='ui horizontal label'>
+                      Private
+                    </span>
+                  : null
+                }
+              </div>
+              <div className='description'>{ repo.description }</div>
+            </Link>
+          </div>
+        );
+      });
   }
 
   render() {
     return (
       <div className='ui container page-wrapper'>
-        { this.renderNavigation() }
-        <div role="list" className="ui divided relaxed list">
+        <div role="list" className='ui divided relaxed list'>
+          { this.renderNavigation() }
           { this.renderRepositories() }
         </div>
+        <LoadMoreButton onClick={this.loadMore} />
       </div>
     );
   }

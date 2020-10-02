@@ -3,13 +3,26 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { fetchRepository, fetchRepositoryIssues } from '../actions';
 import IssueAuthor from './IssueAuthor';
+import LoadMoreButton from './LoadMoreButton';
+import { PER_PAGE } from '../utils/constants';
 
 class Repository extends React.Component {
+  state = { page: 1 };
+
   componentDidMount() {
     const { repo_owner, repo_name } = this.props.match.params;
 
-    this.props.fetchRepository(repo_owner, repo_name);
-    this.props.fetchRepositoryIssues(repo_owner, repo_name);
+    if (!this.props.repo) {
+      this.props.fetchRepository(repo_owner, repo_name);
+    }
+
+    if (this.props.issues && this.props.issues.length >= PER_PAGE) {
+      const issues_count = this.props.issues.length;
+      const page = parseInt(issues_count / PER_PAGE);
+      this.setState({ page });
+    } else {
+      this.props.fetchRepositoryIssues(repo_owner, repo_name, this.state.page);
+    }
   }
 
   renderNavigation() {
@@ -22,19 +35,28 @@ class Repository extends React.Component {
     );
   }
 
+  loadMore = (repo) => {
+    const page = this.state.page + 1;
+    this.setState( { page });
+    this.props.fetchRepositoryIssues(repo.owner, repo.name, page);
+  }
+
   renderIssues(repo, issues) {
-    return issues.map(issue => {
-      return (
-        <div role="listitem" className="item" key={issue.id}>
-          <i aria-hidden="true" className="warning circle large icon middle aligned"></i>
-          <Link to={ `/${repo.owner}/${repo.name}/issues/${issue.number}` } className='content'>
-            <div className='header'>{ issue.title }</div>
-            <div className='description'>
-              #{ issue.number } <IssueAuthor issue={ issue } />
-            </div>
-          </Link>
-        </div>
-      );
+    return issues
+      .filter(issue => { return issue.is_listable; })
+      .sort((i1, i2) => i2.created_at - i1.created_at)
+      .map(issue => {
+        return (
+          <div role="listitem" className="item" key={issue.id}>
+            <i aria-hidden="true" className="warning circle large icon middle aligned"></i>
+            <Link to={ `/${repo.owner}/${repo.name}/issues/${issue.number}` } className='content'>
+              <div className='header'>{ issue.title }</div>
+              <div className='description'>
+                #{ issue.number } <IssueAuthor issue={ issue } />
+              </div>
+            </Link>
+          </div>
+        );
     });
   }
 
@@ -49,6 +71,8 @@ class Repository extends React.Component {
         <div role="list" className="ui divided relaxed list">
           { this.renderIssues(repo, issues) }
         </div>
+
+        <LoadMoreButton onClick={() => this.loadMore(repo) } />
       </div>
     );
   }

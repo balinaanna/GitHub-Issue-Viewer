@@ -14,12 +14,17 @@ export default (state = {}, action) => {
 
       updatedRepoIssues = Object.assign(
         {},
-        ...action.payload.issues.map(issue => { return { [issue.number]: mapIssue(issue) } })
+        state[repo_id],
+        ...action.payload.issues.map(issue => {
+          let mappedIssue = mapIssue(issue);
+          mappedIssue.is_listable = true;
+          return { [issue.number]: mappedIssue }
+        })
       );
 
       return Object.assign(
         {},
-        state[repo_id],
+        state,
         { [repo_id]: updatedRepoIssues}
       );
     case FETCH_ISSUE:
@@ -28,15 +33,18 @@ export default (state = {}, action) => {
       number = action.payload.number;
       repo_id = `${repo_owner}/${repo_name}`;
 
+      let mappedIssue = mapIssue(action.payload.issue);
+      mappedIssue.is_listable = false;
+
       updatedRepoIssues = Object.assign(
         {},
         state[repo_id],
-        { [number]: mapIssue(action.payload.issue) }
+        { [number]: mappedIssue }
       );
 
       return Object.assign(
         {},
-        state[repo_id],
+        state,
         { [repo_id]: updatedRepoIssues }
       );
     default:
