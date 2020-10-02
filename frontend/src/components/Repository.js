@@ -21,7 +21,7 @@ class Repository extends React.Component {
     }
 
     if (this.props.issues && this.props.issues.length >= PER_PAGE) {
-      const issues_count = this.props.issues.filter(issue => { return issue.is_listable; }).length;
+      const issues_count = this.userIssues(this.props.issues).length;
       const page = parseInt(issues_count / PER_PAGE);
       this.setState({ page });
     } else {
@@ -46,6 +46,12 @@ class Repository extends React.Component {
     );
   }
 
+  userIssues(issues) {
+    return issues
+      .filter(issue => { return issue.is_listable; })
+      .sort((i1, i2) => i2.created_at - i1.created_at);
+  }
+
   renderNavigation() {
     return (
       <div className="ui breadcrumb">
@@ -57,21 +63,18 @@ class Repository extends React.Component {
   }
 
   renderIssues(repo, issues) {
-    return issues
-      .filter(issue => { return issue.is_listable; })
-      .sort((i1, i2) => i2.created_at - i1.created_at)
-      .map(issue => {
-        return (
-          <div role="listitem" className="item" key={issue.id}>
-            <i aria-hidden="true" className="warning circle large icon middle aligned"></i>
-            <Link to={ `/${repo.owner}/${repo.name}/issues/${issue.number}` } className='content'>
-              <div className='header'>{ issue.title }</div>
-              <div className='description'>
-                #{ issue.number } <IssueAuthor issue={ issue } />
-              </div>
-            </Link>
-          </div>
-        );
+    return this.userIssues(issues).map(issue => {
+      return (
+        <div role="listitem" className="item" key={issue.id}>
+          <i aria-hidden="true" className="warning circle large icon middle aligned"></i>
+          <Link to={ `/${repo.owner}/${repo.name}/issues/${issue.number}` } className='content'>
+            <div className='header'>{ issue.title }</div>
+            <div className='description'>
+              #{ issue.number } <IssueAuthor issue={ issue } />
+            </div>
+          </Link>
+        </div>
+      );
     });
   }
 

@@ -14,7 +14,7 @@ class RepositoriesList extends React.Component {
   };
 
   componentDidMount() {
-    const repos_count = this.props.repos.filter(issue => { return issue.is_listable; }).length;
+    const repos_count = this.userRepos().length;
     if (repos_count < PER_PAGE) {
       this.loadMore();
     } else {
@@ -38,6 +38,12 @@ class RepositoriesList extends React.Component {
     );
   }
 
+  userRepos() {
+    return this.props.repos
+      .filter(issue => { return issue.is_listable; })
+      .sort((i1, i2) => i2.created_at - i1.created_at);
+  }
+
   renderNavigation() {
     return (
       <div className="ui breadcrumb">
@@ -47,31 +53,28 @@ class RepositoriesList extends React.Component {
   }
 
   renderRepositories() {
-    return this.props.repos
-      .filter(issue => { return issue.is_listable; })
-      .sort((i1, i2) => i2.created_at - i1.created_at)
-      .map(repo => {
-        return (
-          <div role="listitem" className="item" key={repo.id}>
-            <i aria-hidden="true" className="github large icon"></i>
-            <Link to={ `/${repo.owner}/${repo.name}` } className='content'>
-              <div className='header'>
-                <span style={{marginRight: '1em', wordBreak: 'break-all'}}>
-                  { repo.full_name }
-                </span>
+    return this.userRepos().map(repo => {
+      return (
+        <div role="listitem" className="item" key={repo.id}>
+          <i aria-hidden="true" className="github large icon"></i>
+          <Link to={ `/${repo.owner}/${repo.name}` } className='content'>
+            <div className='header'>
+              <span style={{marginRight: '1em', wordBreak: 'break-all'}}>
+                { repo.full_name }
+              </span>
 
-                { repo.private ?
-                    <span className='ui horizontal label'>
-                      Private
-                    </span>
-                  : null
-                }
-              </div>
-              <div className='description'>{ repo.description }</div>
-            </Link>
-          </div>
-        );
-      });
+              { repo.private ?
+                  <span className='ui horizontal label'>
+                    Private
+                  </span>
+                : null
+              }
+            </div>
+            <div className='description'>{ repo.description }</div>
+          </Link>
+        </div>
+      );
+    });
   }
 
   render() {
