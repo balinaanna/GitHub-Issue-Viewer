@@ -2,23 +2,29 @@ import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { fetchRepositories } from '../actions';
-import LoadMoreButton from './LoadMoreButton';
 import { PER_PAGE } from '../utils/constants';
+import LoadMoreButton from './LoadMoreButton';
+import LoadingIndicator from './LoadingIndicator';
+import Modal from './Modal';
+import Message from './Message';
 
 class RepositoriesList extends React.Component {
   state = {
     page: 0,
     isLoading: false,
-    canLoadMore: true
+    canLoadMore: true,
+    error: undefined
   };
 
   componentDidMount() {
-    const repos_count = this.userRepos().length;
-    if (repos_count < PER_PAGE) {
-      this.fetchRepos();
-    } else {
+    const repos_count = this.listableRepos().length;
+
+    if (repos_count > 0) {
       const page = parseInt(repos_count / PER_PAGE);
-      this.setState({ page });
+      const canLoadMore = repos_count % PER_PAGE === 0;
+      this.setState({ page, canLoadMore });
+    } else {
+      this.fetchRepos();
     }
   }
 
@@ -33,15 +39,17 @@ class RepositoriesList extends React.Component {
         return { isLoading: false, canLoadMore, page };
       })},
 
-      () => { this.setState({isLoading: false}); }
+      (error) => { this.setState({isLoading: false, error}); }
     );
   }
 
-  userRepos() {
+  listableRepos() {
     return this.props.repos
       .filter(issue => { return issue.isListable; })
       .sort((i1, i2) => i2.createdAt - i1.createdAt);
   }
+
+  hideError = () => { this.setState({ error: undefined }) }
 
   renderNavigation() {
     return (
@@ -54,7 +62,7 @@ class RepositoriesList extends React.Component {
   }
 
   renderRepositories() {
-    const repos = this.userRepos();
+    const repos = this.listableRepos();
 
     if (repos.length === 0 && !this.state.canLoadMore) {
       return <div className='ui very padded segment'>There aren't any repositories.</div>;
@@ -63,7 +71,7 @@ class RepositoriesList extends React.Component {
     return repos.map(repo => {
       return (
         <div role="listitem" className="item" key={repo.id}>
-          <i aria-hidden="true" className="github large icon"></i>
+          <i className="folder outline large icon"></i>
           <Link to={ `/${repo.owner}/${repo.name}` } className='content'>
             <div className='header'>
               <span style={{marginRight: '1em'}}>
@@ -84,6 +92,20 @@ class RepositoriesList extends React.Component {
     });
   }
 
+  renderError() {
+    const { error } = this.state;
+    if (!error) { return null };
+    const errorContent = { header: error.message, text: 'Try again later.' }
+
+    return (
+      <Modal>
+        <div className='page-wrapper' onClick={ this.hideError } >
+          <Message className='negative' content={ errorContent } />
+        </div>
+      </Modal>
+    );
+  }
+
   render() {
     return (
       <div className='ui container page-wrapper'>
@@ -93,9 +115,11 @@ class RepositoriesList extends React.Component {
         </div>
         <LoadMoreButton
           onClick={this.fetchRepos}
-          isLoading={this.state.isLoading}
           canLoadMore={ this.state.canLoadMore }
+          isLoading={ this.state.isLoading }
         />
+        { this.state.isLoading ? <LoadingIndicator /> : null }
+        { this.renderError() }
       </div>
     );
   }

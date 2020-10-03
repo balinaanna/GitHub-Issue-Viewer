@@ -12,7 +12,7 @@ export default (state = {}, action) => {
       return Object.assign(
         {},
         state,
-        ...action.payload.repos.map(repo => {
+        ...action.payload.map(repo => {
           let mappedRepo = mapRepo(repo);
           repoId = repoID(repo.owner, repo.name);
           mappedRepo.isListable = true;

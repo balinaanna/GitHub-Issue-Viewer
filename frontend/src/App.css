@@ -1,5 +1,6 @@
 .page-wrapper {
-  padding: 8em 0 5em 0;
+  padding: 9em 0 5em 0;
+  min-height: 100%;
 }
 .ui.breadcrumb {
   margin-bottom: 3em;
@@ -21,7 +22,7 @@
   z-index: 1000;
 }
 .page-wrapper .ui.secondary.menu {
-  padding: 4em 0 1em 0;
+  padding: 5em 0 1.5em 0;
   background: #fff;
   box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
 }
@@ -29,6 +30,16 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+#modal {
+  position: fixed;
+  height: 100%;
+  width: 100%!important;
+  top: 0;
+  left: 0;
+  padding-top: inherit;
+  z-index: 10000;
+  opacity: 0.95;
 }
 
 @media only screen and (max-width: 767px) {

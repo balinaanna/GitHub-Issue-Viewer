@@ -1,29 +1,34 @@
 import React from 'react';
-import { NavLink, } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { fetchRepository, fetchRepositoryIssues } from '../actions';
-import IssueAuthor from './IssueAuthor';
-import LoadMoreButton from './LoadMoreButton';
+import { fetchRepositoryIssues } from '../actions';
 import { PER_PAGE, repoID } from '../utils/constants';
+import LoadMoreButton from './LoadMoreButton';
+import LoadingIndicator from './LoadingIndicator';
+import Modal from './Modal';
+import Message from './Message';
+import IssueAuthor from './IssueAuthor';
 
 class Repository extends React.Component {
   state = {
     page: 0,
     isLoading: false,
-    canLoadMore: true
+    canLoadMore: true,
+    error: undefined
   };
 
   componentDidMount() {
     const { repoOwner, repoName } = this.props.match.params;
+    const { repo, issues } = this.props;
+    const listableIssues = this.listableIssues(issues);
 
-    if (!this.props.repo) {
-      this.props.fetchRepository(repoOwner, repoName);
-    }
+    this.setState({ repoOwner, repoName });
 
-    if (this.props.issues && this.props.issues.length >= PER_PAGE) {
-      const issues_count = this.userIssues(this.props.issues).length;
+    if (listableIssues.length > 0) {
+      const issues_count = listableIssues.length;
       const page = parseInt(issues_count / PER_PAGE);
-      this.setState({ page });
+      const canLoadMore = issues_count % PER_PAGE === 0;
+      this.setState({ page, canLoadMore });
     } else {
       this.fetchIssues(repoOwner, repoName);
     }
@@ -42,15 +47,17 @@ class Repository extends React.Component {
         return { isLoading: false, canLoadMore, page };
       })},
 
-      () => { this.setState({isLoading: false}); }
+      (error) => { this.setState({isLoading: false, error}); }
     );
   }
 
-  userIssues(issues) {
+  listableIssues(issues = []) {
     return issues
       .filter(issue => { return issue.isListable; })
       .sort((i1, i2) => i2.createdAt - i1.createdAt);
   }
+
+  hideError = () => { this.setState({ error: undefined }) }
 
   renderNavigation() {
     const { repoOwner, repoName } = this.props.match.params;
@@ -66,16 +73,16 @@ class Repository extends React.Component {
     );
   }
 
-  renderIssues(repo, issues) {
+  renderIssues(repoOwner, repoName, issues) {
     if (issues.length === 0 && !this.state.canLoadMore) {
       return <div className='ui very padded segment'>There aren't any issues.</div>;
     }
 
-    return this.userIssues(issues).map(issue => {
+    return this.listableIssues(issues).map(issue => {
       return (
         <div role="listitem" className="item" key={issue.id}>
           <i aria-hidden="true" className="warning circle large icon middle aligned"></i>
-          <NavLink to={ `/${repo.owner}/${repo.name}/issues/${issue.number}` } className='content'>
+          <NavLink to={ `/${repoOwner}/${repoName}/issues/${issue.number}` } className='content'>
             <div className='header'>{ issue.title }</div>
             <div className='description'>
               #{ issue.number } <IssueAuthor issue={ issue } />
@@ -86,22 +93,38 @@ class Repository extends React.Component {
     });
   }
 
+  renderError() {
+    const { error } = this.state;
+    if (!error) { return null };
+    const errorContent = { header: error.message, text: 'Try again later.' }
+
+    return (
+      <Modal>
+        <div className='page-wrapper' onClick={ this.hideError } >
+          <Message className='negative' content={ errorContent } />
+        </div>
+      </Modal>
+    );
+  }
+
   render() {
-    const { repo, issues } = this.props;
+    const { issues } = this.props;
+    const { repoOwner, repoName } = this.props.match.params;
 
     return (
       <div className='ui container page-wrapper'>
         { this.renderNavigation() }
 
         <div role="list" className="ui divided relaxed list">
-          { (!repo || !issues) ? null : this.renderIssues(repo, issues) }
+          { !!issues ? this.renderIssues(repoOwner, repoName, issues) : null }
         </div>
 
         <LoadMoreButton
-          onClick={ () => this.fetchIssues(repo.owner, repo.name) }
-          isLoading={ this.state.isLoading }
+          onClick={ () => this.fetchIssues(repoOwner, repoName) }
           canLoadMore={ this.state.canLoadMore }
-        />
+          isLoading={ this.state.isLoading } />
+        { this.state.isLoading ? <LoadingIndicator /> : null }
+        { this.renderError() }
       </div>
     );
   }
@@ -121,5 +144,5 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(
   mapStateToProps,
-  { fetchRepository, fetchRepositoryIssues }
+  { fetchRepositoryIssues }
 )(Repository);
