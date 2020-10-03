@@ -1,5 +1,5 @@
 .page-wrapper {
-  padding: 5em 0;
+  padding: 8em 0 5em 0;
 }
 .ui.breadcrumb {
   margin-bottom: 3em;
@@ -16,4 +16,24 @@
 }
 .loading-indicator .loading {
   display: inline-block;
+}
+.ui.top.menu {
+  z-index: 1000;
+}
+.page-wrapper .ui.secondary.menu {
+  padding: 4em 0 1em 0;
+  background: #fff;
+  box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
+}
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media only screen and (max-width: 767px) {
+  .page-wrapper .ui.secondary.menu {
+    padding-left: 1em;
+    padding-right: 1em;
+  }
 }

@@ -4,7 +4,7 @@ import { baseURL } from '../utils/api';
 
 const Header = () => {
   return (
-    <div className='ui top fixed menu'>
+    <div className='ui top fixed inverted menu'>
       <div className='ui container'>
         <div className='right menu'>
           <Link to={ `${baseURL}/auth/github` } className='header item'>

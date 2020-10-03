@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { fetchRepositories } from '../actions';
 import LoadMoreButton from './LoadMoreButton';
@@ -45,8 +45,10 @@ class RepositoriesList extends React.Component {
 
   renderNavigation() {
     return (
-      <div className="ui breadcrumb">
-        <div className='section active'>Home</div>
+      <div className="ui breadcrumb fixed secondary menu">
+        <div className='ui container'>
+          <NavLink to='/' exact className='section'>Home</NavLink>
+        </div>
       </div>
     );
   }
@@ -64,7 +66,7 @@ class RepositoriesList extends React.Component {
           <i aria-hidden="true" className="github large icon"></i>
           <Link to={ `/${repo.owner}/${repo.name}` } className='content'>
             <div className='header'>
-              <span style={{marginRight: '1em', wordBreak: 'break-all'}}>
+              <span style={{marginRight: '1em'}}>
                 { repo.fullName }
               </span>
 
@@ -85,8 +87,8 @@ class RepositoriesList extends React.Component {
   render() {
     return (
       <div className='ui container page-wrapper'>
+        { this.renderNavigation() }
         <div role="list" className='ui divided relaxed list'>
-          { this.renderNavigation() }
           { this.renderRepositories() }
         </div>
         <LoadMoreButton
