@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { fetchRepository, fetchRepositoryIssues } from '../actions';
 import IssueAuthor from './IssueAuthor';
 import LoadMoreButton from './LoadMoreButton';
-import { PER_PAGE } from '../utils/constants';
+import { PER_PAGE, repoID } from '../utils/constants';
 
 class Repository extends React.Component {
   state = {
@@ -14,10 +14,10 @@ class Repository extends React.Component {
   };
 
   componentDidMount() {
-    const { repo_owner, repo_name } = this.props.match.params;
+    const { repoOwner, repoName } = this.props.match.params;
 
     if (!this.props.repo) {
-      this.props.fetchRepository(repo_owner, repo_name);
+      this.props.fetchRepository(repoOwner, repoName);
     }
 
     if (this.props.issues && this.props.issues.length >= PER_PAGE) {
@@ -25,16 +25,16 @@ class Repository extends React.Component {
       const page = parseInt(issues_count / PER_PAGE);
       this.setState({ page });
     } else {
-      this.loadMore(repo_owner, repo_name);
+      this.loadMore(repoOwner, repoName);
     }
   }
 
-  loadMore = (repo_owner, repo_name) => {
+  loadMore = (repoOwner, repoName) => {
     this.setState({ isLoading: true });
 
     this.props.fetchRepositoryIssues(
-      repo_owner,
-      repo_name,
+      repoOwner,
+      repoName,
       this.state.page + 1,
 
       (canLoadMore) => { this.setState(state => {
@@ -105,9 +105,10 @@ class Repository extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const { repo_owner, repo_name } = ownProps.match.params;
-  const repo = state.repositories[`${repo_owner}/${repo_name}`];
-  const issues = state.issues[`${repo_owner}/${repo_name}`];
+  const { repoOwner, repoName } = ownProps.match.params;
+  const repoId = repoID(repoOwner, repoName);
+  const repo = state.repositories[repoId];
+  const issues = state.issues[repoId];
 
   return {
     repo,

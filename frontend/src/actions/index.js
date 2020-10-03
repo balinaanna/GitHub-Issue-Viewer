@@ -34,8 +34,8 @@ export const fetchRepository = (owner, name) => async dispatch => {
   });
 }
 
-export const fetchRepositoryIssues = (repo_owner, repo_name, page = 1, successCallback, errorCallback) => async dispatch => {
-  const response = await api.get(`/repos/${repo_owner}/${repo_name}/issues`, {
+export const fetchRepositoryIssues = (repoOwner, repoName, page = 1, successCallback, errorCallback) => async dispatch => {
+  const response = await api.get(`/repos/${repoOwner}/${repoName}/issues`, {
     params: {
       page,
       per_page: PER_PAGE
@@ -46,8 +46,8 @@ export const fetchRepositoryIssues = (repo_owner, repo_name, page = 1, successCa
     type: FETCH_REPOSITORY_ISSUES,
     payload: {
       issues: response.data,
-      repo_owner,
-      repo_name
+      repoOwner,
+      repoName
     }
   });
 
@@ -56,15 +56,15 @@ export const fetchRepositoryIssues = (repo_owner, repo_name, page = 1, successCa
   // errorCallback();
 }
 
-export const fetchIssue = (repo_owner, repo_name, number) => async dispatch => {
-  const response = await api.get(`/repos/${repo_owner}/${repo_name}/issues/${number}`);
+export const fetchIssue = (repoOwner, repoName, number) => async dispatch => {
+  const response = await api.get(`/repos/${repoOwner}/${repoName}/issues/${number}`);
 
   dispatch({
     type: FETCH_ISSUE,
     payload: {
       issue: response.data,
-      repo_owner,
-      repo_name,
+      repoOwner,
+      repoName,
       number
     }
   });

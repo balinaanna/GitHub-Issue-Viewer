@@ -3,28 +3,29 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { fetchIssue, fetchRepository } from '../actions';
+import { repoID } from '../utils/constants';
 import IssueAuthor from './IssueAuthor';
 
 class Issue extends React.Component {
   componentDidMount() {
     if (!this.props.repo) {
-      const { repo_owner, repo_name, number } = this.props.match.params;
-      this.props.fetchRepository(repo_owner, repo_name);
+      const { repoOwner, repoName, number } = this.props.match.params;
+      this.props.fetchRepository(repoOwner, repoName);
 
       if (!this.props.issue) {
-        this.props.fetchIssue(repo_owner, repo_name, number);
+        this.props.fetchIssue(repoOwner, repoName, number);
       }
     }
   }
 
   renderNavigation() {
-    const { repo_owner, repo_name, number } = this.props.match.params;
+    const { repoOwner, repoName, number } = this.props.match.params;
 
     return (
       <div className="ui breadcrumb">
         <Link to='/' className='section'>Home</Link>
         <div className="divider">/</div>
-        <Link to={ `/${repo_owner}/${repo_name}` } className='section'>{repo_name}</Link>
+        <Link to={ `/${repoID(repoOwner, repoName)}` } className='section'>{repoName}</Link>
         <div className="divider">/</div>
         <div className="active section">#{ number }</div>
       </div>
@@ -58,11 +59,11 @@ class Issue extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const { repo_owner, repo_name, number } = ownProps.match.params;
-  const repo_id = `${repo_owner}/${repo_name}`;
+  const { repoOwner, repoName, number } = ownProps.match.params;
+  const repoId = repoID(repoOwner, repoName);
 
-  const repo = state.repositories[repo_id];
-  const issues = state.issues[repo_id];
+  const repo = state.repositories[repoId];
+  const issues = state.issues[repoId];
   const issue = issues ? issues[number] : undefined;
 
   return { repo, issue }

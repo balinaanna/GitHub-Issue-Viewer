@@ -2,19 +2,20 @@ import {
   FETCH_REPOSITORY_ISSUES,
   FETCH_ISSUE
 } from '../actions/types';
+import { repoID } from '../utils/constants';
 
 export default (state = {}, action) => {
-  let repo_owner, repo_name, number, repo_id, updatedRepoIssues;
+  let repoOwner, repoName, number, repoId, updatedRepoIssues;
 
   switch (action.type) {
     case FETCH_REPOSITORY_ISSUES:
-      repo_owner = action.payload.repo_owner;
-      repo_name = action.payload.repo_name;
-      repo_id = `${repo_owner}/${repo_name}`;
+      repoOwner = action.payload.repoOwner;
+      repoName = action.payload.repoName;
+      repoId = repoID(repoOwner, repoName);
 
       updatedRepoIssues = Object.assign(
         {},
-        state[repo_id],
+        state[repoId],
         ...action.payload.issues.map(issue => {
           let mappedIssue = mapIssue(issue);
           mappedIssue.isListable = true;
@@ -25,27 +26,27 @@ export default (state = {}, action) => {
       return Object.assign(
         {},
         state,
-        { [repo_id]: updatedRepoIssues}
+        { [repoId]: updatedRepoIssues}
       );
     case FETCH_ISSUE:
-      repo_owner = action.payload.repo_owner;
-      repo_name = action.payload.repo_name;
+      repoOwner = action.payload.repoOwner;
+      repoName = action.payload.repoName;
       number = action.payload.number;
-      repo_id = `${repo_owner}/${repo_name}`;
+      repoId = repoID(repoOwner, repoName);
 
       let mappedIssue = mapIssue(action.payload.issue);
       mappedIssue.isListable = false;
 
       updatedRepoIssues = Object.assign(
         {},
-        state[repo_id],
+        state[repoId],
         { [number]: mappedIssue }
       );
 
       return Object.assign(
         {},
         state,
-        { [repo_id]: updatedRepoIssues }
+        { [repoId]: updatedRepoIssues }
       );
     default:
       return state;
