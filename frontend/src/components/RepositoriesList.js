@@ -15,14 +15,14 @@ class RepositoriesList extends React.Component {
   componentDidMount() {
     const repos_count = this.userRepos().length;
     if (repos_count < PER_PAGE) {
-      this.loadMore();
+      this.fetchRepos();
     } else {
       const page = parseInt(repos_count / PER_PAGE);
       this.setState({ page });
     }
   }
 
-  loadMore = () => {
+  fetchRepos = () => {
     this.setState({ isLoading: true });
 
     this.props.fetchRepositories(
@@ -92,7 +92,7 @@ class RepositoriesList extends React.Component {
           { this.renderRepositories() }
         </div>
         <LoadMoreButton
-          onClick={this.loadMore}
+          onClick={this.fetchRepos}
           isLoading={this.state.isLoading}
           canLoadMore={ this.state.canLoadMore }
         />

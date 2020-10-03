@@ -25,11 +25,11 @@ class Repository extends React.Component {
       const page = parseInt(issues_count / PER_PAGE);
       this.setState({ page });
     } else {
-      this.loadMore(repoOwner, repoName);
+      this.fetchIssues(repoOwner, repoName);
     }
   }
 
-  loadMore = (repoOwner, repoName) => {
+  fetchIssues = (repoOwner, repoName) => {
     this.setState({ isLoading: true });
 
     this.props.fetchRepositoryIssues(
@@ -98,7 +98,7 @@ class Repository extends React.Component {
         </div>
 
         <LoadMoreButton
-          onClick={ () => this.loadMore(repo.owner, repo.name) }
+          onClick={ () => this.fetchIssues(repo.owner, repo.name) }
           isLoading={ this.state.isLoading }
           canLoadMore={ this.state.canLoadMore }
         />
