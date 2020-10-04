@@ -1,6 +1,5 @@
 import {
   FETCH_REPOSITORIES,
-  FETCH_REPOSITORY,
   FETCH_REPOSITORY_ISSUES,
   FETCH_ISSUE
 } from './types';
@@ -16,17 +15,6 @@ export const fetchRepositories = (page = 1, successCallback, errorCallback) => a
 
     const canLoadMore = response.data.length >= PER_PAGE;
     successCallback(canLoadMore);
-  } catch(error) {
-    errorCallback(error);
-  }
-}
-
-export const fetchRepository = (owner, name, successCallback, errorCallback) => async dispatch => {
-  try {
-    const response = await api.get(`/repos/${owner}/${name}`);
-    dispatch({ type: FETCH_REPOSITORY, payload: response.data });
-
-    successCallback();
   } catch(error) {
     errorCallback(error);
   }

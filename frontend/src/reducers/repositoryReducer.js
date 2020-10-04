@@ -1,6 +1,5 @@
 import {
-  FETCH_REPOSITORIES,
-  FETCH_REPOSITORY
+  FETCH_REPOSITORIES
 } from '../actions/types';
 import { repoID } from '../utils/constants';
 
@@ -19,12 +18,6 @@ export default (state = {}, action) => {
           return { [repoId]: mappedRepo }
         })
       );
-    case FETCH_REPOSITORY:
-      const repo = action.payload;
-      repoId = repoID(repo.owner, repo.name);
-      let mappedRepo = mapRepo(repo);
-      mappedRepo.isListable = false;
-      return { ...state, [repoId]: mappedRepo };
     default:
       return state;
   }
