@@ -13,13 +13,13 @@ class Repository extends React.Component {
   state = {
     page: 0,
     isLoading: false,
-    canLoadMore: true,
+    canLoadMore: false,
     error: undefined
   };
 
   componentDidMount() {
     const { repoOwner, repoName } = this.props.match.params;
-    const { repo, issues } = this.props;
+    const { issues } = this.props;
     const listableIssues = this.listableIssues(issues);
 
     this.setState({ repoOwner, repoName });
@@ -35,6 +35,9 @@ class Repository extends React.Component {
   }
 
   fetchIssues = (repoOwner, repoName) => {
+    const { repo } = this.props;
+    if (repo && !repo.hasIssues) { return; }
+
     this.setState({ isLoading: true });
 
     this.props.fetchRepositoryIssues(
@@ -73,8 +76,16 @@ class Repository extends React.Component {
     );
   }
 
-  renderIssues(repoOwner, repoName, issues) {
-    if (issues.length === 0 && !this.state.canLoadMore) {
+  renderIssues(repoOwner, repoName) {
+    const { issues, repo } = this.props;
+
+    if (repo && !repo.hasIssues) {
+      return <div className='ui very padded segment'>
+        Issues are disabled for this repository.
+      </div>;
+    }
+
+    if (issues && issues.length === 0 && !this.state.canLoadMore) {
       return <div className='ui very padded segment'>There aren't any issues.</div>;
     }
 
@@ -108,7 +119,6 @@ class Repository extends React.Component {
   }
 
   render() {
-    const { issues } = this.props;
     const { repoOwner, repoName } = this.props.match.params;
 
     return (
@@ -116,7 +126,7 @@ class Repository extends React.Component {
         { this.renderNavigation() }
 
         <div role="list" className="ui divided relaxed list">
-          { !!issues ? this.renderIssues(repoOwner, repoName, issues) : null }
+          { this.renderIssues(repoOwner, repoName) }
         </div>
 
         <LoadMoreButton
