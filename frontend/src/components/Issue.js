@@ -60,6 +60,13 @@ class Issue extends React.Component {
           { issue.title }
           <div className='ui sub header'>
             #{ issue.number }
+            {
+              issue.state === 'open' ?
+                <span className='ui horizontal label'>
+                  open
+                </span>
+              : null
+            }
           </div>
         </h1>
         <IssueAuthor issue={ issue } />
