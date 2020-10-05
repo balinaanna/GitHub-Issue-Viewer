@@ -1,16 +1,24 @@
 import {
   FETCH_REPOSITORIES
 } from '../actions/types';
-import { repoID } from '../utils/constants';
+import { repoID, PER_PAGE } from '../utils/constants';
+import mapRepo from '../mappings/mapRepositoryFromResponse';
 
-export default (state = {}, action) => {
+const defaultState = {
+  canLoadMore: true,
+  items: {}
+};
+
+export default (state = defaultState, action) => {
   let repoId;
 
   switch (action.type) {
     case FETCH_REPOSITORIES:
-      return Object.assign(
+      const canLoadMore = action.payload.length == PER_PAGE;
+
+      const updatedRepos = Object.assign(
         {},
-        state,
+        state.items,
         ...action.payload.map(repo => {
           let mappedRepo = mapRepo(repo);
           repoId = repoID(repo.owner, repo.name);
@@ -18,21 +26,14 @@ export default (state = {}, action) => {
           return { [repoId]: mappedRepo }
         })
       );
+
+      return Object.assign(
+        {},
+        state,
+        { canLoadMore },
+        { items: updatedRepos }
+      );
     default:
       return state;
   }
-}
-
-function mapRepo(repo) {
-  return {
-    id: repo.id,
-    name: repo.name,
-    fullName: repo.full_name,
-    isPrivate: repo.private,
-    url: repo.url,
-    description: repo.description,
-    owner: repo.owner,
-    createdAt: new Date(repo.created_at),
-    hasIssues: repo.has_issues
-  };
 }

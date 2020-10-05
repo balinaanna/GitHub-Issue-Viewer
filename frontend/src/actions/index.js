@@ -6,21 +6,20 @@ import {
 import { api } from '../utils/api';
 import { PER_PAGE } from '../utils/constants';
 
-export const fetchRepositories = (page = 1, successCallback, errorCallback) => async dispatch => {
+export const fetchRepositories = ({ page = 1 }, successCallback, errorCallback) => async dispatch => {
   try {
     const response = await api.get('/repos', {
       params: { page, per_page: PER_PAGE }
     });
     dispatch({ type: FETCH_REPOSITORIES, payload: response.data });
 
-    const canLoadMore = response.data.length >= PER_PAGE;
-    successCallback(canLoadMore);
+    successCallback({ itemsCount: response.data.length, page });
   } catch(error) {
     errorCallback(error);
   }
 }
 
-export const fetchRepositoryIssues = (repoOwner, repoName, page = 1, successCallback, errorCallback) => async dispatch => {
+export const fetchRepositoryIssues = ({ repoOwner, repoName, page = 1 }, successCallback, errorCallback) => async dispatch => {
   try {
     const response = await api.get(`/repos/${repoOwner}/${repoName}/issues`, {
       params: { page, per_page: PER_PAGE }
@@ -34,14 +33,13 @@ export const fetchRepositoryIssues = (repoOwner, repoName, page = 1, successCall
       }
     });
 
-    const canLoadMore = response.data.length >= PER_PAGE;
-    successCallback(canLoadMore);
+    successCallback({ itemsCount: response.data.length, page });
   } catch(error) {
     errorCallback(error);
   }
 }
 
-export const fetchIssue = (repoOwner, repoName, number, successCallback, errorCallback) => async dispatch => {
+export const fetchIssue = ({ repoOwner, repoName, number }, successCallback, errorCallback) => async dispatch => {
   try {
     const response = await api.get(`/repos/${repoOwner}/${repoName}/issues/${number}`);
     dispatch({
