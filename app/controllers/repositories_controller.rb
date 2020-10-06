@@ -4,7 +4,7 @@ class RepositoriesController < ApplicationController
       response = github.repos.list per_page: params[:per_page] || 10, page: params[:page] || 1, sort: :created
       repos = response.body.map { |repo| mapRepoFromResponse(repo) }
 
-      render json: repos
+      render json: { data: repos }
     rescue Github::Error::GithubError => e
       puts e.message
       if e.is_a? Github::Error::ServiceError
@@ -19,7 +19,7 @@ class RepositoriesController < ApplicationController
     response = github.repos.get user: params[:owner], repo: params[:repo]
     repo = response.body
 
-    render json: mapRepoFromResponse(repo)
+    render json: { data: mapRepoFromResponse(repo) }
   end
 
   private

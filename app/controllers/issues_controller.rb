@@ -11,14 +11,14 @@ class IssuesController < ApplicationController
         # .select { |issue| !issue.key? :pull_request }
         .map { |issue| mapIssueFromResponse(issue) }
 
-      render json: issues
+      render json: { data: issues }
   end
 
   def show
       response = github.issues.get user: params[:owner], repo: params[:repo], number: params[:number]
       issue = response.body
 
-      render json: mapIssueFromResponse(issue)
+      render json: { data: mapIssueFromResponse(issue) }
   end
 
   private

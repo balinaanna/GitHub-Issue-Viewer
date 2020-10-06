@@ -9,7 +9,9 @@ describe 'Repos API' do
       produces 'application/json'
 
       response '200', 'List of repos' do
-        schema type: :array, items: { '$ref' => '#/components/schemas/repo' }
+        schema type: :object, properties: {
+          data: { type: :array, items: { '$ref' => '#/components/schemas/repo' } }
+        }
 
         run_test!
       end
@@ -29,7 +31,9 @@ describe 'Repos API' do
         description: 'Repo name on GitHub'
 
       response '200', 'Single Repo' do
-        schema '$ref' => '#/components/schemas/repo'
+        schema type: :object, properties: {
+          data: { '$ref' => '#/components/schemas/repo' }
+        }
         let(:owner) { 'rspec' }
         let(:repo)  { 'rspec' }
 
