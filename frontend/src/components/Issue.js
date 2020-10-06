@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { fetchIssue } from '../actions';
 import { repoID } from '../utils/constants';
@@ -8,7 +8,7 @@ import IssueAuthor from './IssueAuthor';
 import LoadingIndicator from './LoadingIndicator';
 import { withData } from './withData';
 
-class Issue extends React.Component {
+class Issue extends React.PureComponent {
 
   renderNavigation() {
     const { repoOwner, repoName, number } = this.props.match.params;

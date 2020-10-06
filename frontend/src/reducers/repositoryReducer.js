@@ -1,5 +1,6 @@
 import {
-  FETCH_REPOSITORIES
+  FETCH_REPOSITORIES,
+  DELETE_SESSION
 } from '../actions/types';
 import { repoID, PER_PAGE } from '../utils/constants';
 import mapRepo from '../mappings/mapRepositoryFromResponse';
@@ -10,20 +11,20 @@ const defaultState = {
 };
 
 export default (state = defaultState, action) => {
-  let repoId;
-
   switch (action.type) {
     case FETCH_REPOSITORIES:
-      const canLoadMore = action.payload.length == PER_PAGE;
+      const { data } = action.payload;
+      const canLoadMore = data.length === PER_PAGE;
 
       const updatedRepos = Object.assign(
         {},
         state.items,
-        ...action.payload.map(repo => {
+         ...data.map(repo => {
           let mappedRepo = mapRepo(repo);
-          repoId = repoID(repo.owner, repo.name);
+          const repoId = repoID(repo.owner, repo.name);
           mappedRepo.isListable = true;
-          return { [repoId]: mappedRepo }
+
+          return { [repoId]: mappedRepo };
         })
       );
 
@@ -33,6 +34,8 @@ export default (state = defaultState, action) => {
         { canLoadMore },
         { items: updatedRepos }
       );
+    case DELETE_SESSION:
+      return defaultState;
     default:
       return state;
   }

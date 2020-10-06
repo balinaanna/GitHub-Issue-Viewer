@@ -1,39 +1,42 @@
 import {
   FETCH_REPOSITORIES,
   FETCH_REPOSITORY_ISSUES,
-  FETCH_ISSUE
+  FETCH_ISSUE,
+  DELETE_SESSION
 } from '../actions/types';
 import { repoID, PER_PAGE } from '../utils/constants';
-import mapRepo from '../mappings/mapRepositoryFromResponse';
 import mapIssue from '../mappings/mapIssueFromResponse';
 
-export default (state = {}, action) => {
-  let repoOwner, repoName, number, repoId, updatedRepoIssues, canLoadMore;
+const defaultState = {};
+
+export default (state = defaultState, action) => {
+  let repoId, updatedRepoIssues, canLoadMore;
 
   switch (action.type) {
-    case FETCH_REPOSITORIES:
+    case FETCH_REPOSITORIES: {
+      const { data } = action.payload;
+
       return Object.assign(
         {},
         state,
-        ...action.payload.map(repo => {
-          const mappedRepo = mapRepo(repo);
+        ...data.map(repo => {
           repoId = repoID(repo.owner, repo.name);
-          if (!repo.has_issues) {
-            return { [repoId]: { canLoadMore: false, items: {} } };
-          }
+          return (!repo.has_issues)
+            ? { [repoId]: { canLoadMore: false, items: {} } }
+            : state;
         })
       );
+    }
+    case FETCH_REPOSITORY_ISSUES: {
+      const { issues: { data }, repoOwner, repoName } = action.payload;
 
-    case FETCH_REPOSITORY_ISSUES:
-      repoOwner = action.payload.repoOwner;
-      repoName = action.payload.repoName;
       repoId = repoID(repoOwner, repoName);
-      canLoadMore = action.payload.issues.length === PER_PAGE;
+      canLoadMore = data.length === PER_PAGE;
 
       updatedRepoIssues = Object.assign(
         {},
         state[repoId] ? state[repoId].items : {},
-        ...action.payload.issues.map(issue => {
+        ...data.map(issue => {
           let mappedIssue = mapIssue(issue);
           mappedIssue.isListable = true;
           return { [issue.number]: mappedIssue }
@@ -45,14 +48,12 @@ export default (state = {}, action) => {
         state,
         { [repoId]: { canLoadMore, items: updatedRepoIssues } }
       );
-
-    case FETCH_ISSUE:
-      repoOwner = action.payload.repoOwner;
-      repoName = action.payload.repoName;
-      number = action.payload.number;
+    }
+    case FETCH_ISSUE: {
+      const { issue: { data }, repoOwner, repoName, number } = action.payload;
       repoId = repoID(repoOwner, repoName);
 
-      let mappedIssue = mapIssue(action.payload.issue);
+      let mappedIssue = mapIssue(data);
       mappedIssue.isListable = false;
 
       updatedRepoIssues = Object.assign(
@@ -66,6 +67,9 @@ export default (state = {}, action) => {
         state,
         { [repoId]: { canLoadMore: true, items: updatedRepoIssues } }
       );
+    }
+    case DELETE_SESSION:
+      return defaultState;
     default:
       return state;
   }

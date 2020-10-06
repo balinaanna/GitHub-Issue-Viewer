@@ -1,10 +1,11 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import Modal from './Modal';
 import Message from './Message';
 import { getHocDisplayName } from '../utils/constants';
 
 export const withData = ({ shouldFetchOnMount = true } = {}) => (WrappedComponent) => {
-  class WithData extends React.Component {
+  class WithData extends React.PureComponent {
     constructor(props) {
       super(props);
 
@@ -12,15 +13,14 @@ export const withData = ({ shouldFetchOnMount = true } = {}) => (WrappedComponen
         isLoading: false,
         error: undefined
       };
+
       this.wrappedRef = React.createRef();
     }
 
     componentDidMount() {
       if (!shouldFetchOnMount) { return };
 
-      const { data } = this.props;
-
-      if (!(this.props.data)) {
+      if (!this.props.data) {
         this.fetchData(this.props.fetchParams);
       }
     }
@@ -52,7 +52,23 @@ export const withData = ({ shouldFetchOnMount = true } = {}) => (WrappedComponen
       const { error } = this.state;
       if (!error) { return null };
 
-      const errorContent = { header: error.message, text: 'Try again later.' }
+      const { response } = error;
+      let header, text, status;
+
+      if (response) {
+        header = response.data.error.title;
+        text = response.data.error.detail;
+        status = response.status;
+
+        if ([401, 403].includes(status)) {
+          return <Redirect to='/' />;
+        }
+      } else {
+        header = error.message;
+        text = 'Try again later.'
+      }
+
+      const errorContent = { header, text };
 
       return (
         <Modal>
@@ -70,7 +86,8 @@ export const withData = ({ shouldFetchOnMount = true } = {}) => (WrappedComponen
         error={ this.state.error }
         isLoading={ this.state.isLoading }
         renderError={ this.renderError }
-        fetchData={ this.fetchData } />;
+        fetchData={ this.fetchData }
+        showError={ this.showError } />;
     }
   }
 

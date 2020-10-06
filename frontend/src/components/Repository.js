@@ -1,15 +1,29 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { fetchRepositoryIssues } from '../actions';
-import { PER_PAGE, repoID } from '../utils/constants';
+import { repoID } from '../utils/constants';
 import LoadMoreButton from './LoadMoreButton';
 import LoadingIndicator from './LoadingIndicator';
 import IssueAuthor from './IssueAuthor';
 import { withListableData } from './withListableData';
 
-class Repository extends React.Component {
+const Issue = React.memo((props) => {
+  const { issue } = props;
+  return (
+    <div role='listitem' className='item'>
+      <i aria-hidden='true' className='warning circle large icon middle aligned'></i>
+      <Link to={ `/${props.repoOwner}/${props.repoName}/issues/${props.issue.number}` } className='content'>
+        <div className='header'>{ issue.title }</div>
+        <div className='description'>
+          #{ issue.number } <IssueAuthor issue={ issue } />
+        </div>
+      </Link>
+    </div>
+  );
+});
 
+class Repository extends React.PureComponent {
   renderNavigation() {
     const { repoOwner, repoName } = this.props.match.params;
 
@@ -32,28 +46,16 @@ class Repository extends React.Component {
     }
 
     return this.props.listableItems(issues).map(issue => {
-      return (
-        <div role='listitem' className='item' key={issue.id}>
-          <i aria-hidden='true' className='warning circle large icon middle aligned'></i>
-          <NavLink to={ `/${repoOwner}/${repoName}/issues/${issue.number}` } className='content'>
-            <div className='header'>{ issue.title }</div>
-            <div className='description'>
-              #{ issue.number } <IssueAuthor issue={ issue } />
-            </div>
-          </NavLink>
-        </div>
-      );
+      return <Issue issue={ issue } repoOwner={ repoOwner } repoName={ repoName } key={ issue.id } />;
     });
   }
 
   render() {
     const {
       data: { items, canLoadMore } = {items: {}, canLoadMore: true},
-      pagination: { pagesCount },
-      fetchData,
-      isLoading,
-      renderError,
+      pagesCount, fetchData, isLoading, renderError
     } = this.props;
+
     const { repoOwner, repoName } = this.props.match.params;
 
     return (

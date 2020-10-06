@@ -37,13 +37,14 @@ RSpec.configure do |config|
               id: { type: :integer },
               name: { type: :string },
               full_name: { type: :string },
+              has_issues: { type: :boolean },
               private: { type: :boolean },
               url: { type: :string, format: :url },
               description: { type: :string, nullable: true },
               owner: { type: :string },
               created_at: { type: :string, format: 'date-time' }
             },
-            required: %w[id name full_name private url description owner created_at]
+            required: %w[id name full_name has_issues private url description owner created_at]
           },
           issue: {
             type: :object,

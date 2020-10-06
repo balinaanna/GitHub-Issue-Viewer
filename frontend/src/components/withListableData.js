@@ -3,7 +3,7 @@ import { PER_PAGE, getHocDisplayName } from '../utils/constants';
 import { withData } from './withData';
 
 export function withListableData(WrappedComponent) {
-  class WithListableData extends React.Component {
+  class WithListableData extends React.PureComponent {
     constructor(props) {
       super(props);
 
@@ -26,7 +26,7 @@ export function withListableData(WrappedComponent) {
 
       const pagesCount = parseInt(items_count / PER_PAGE);
 
-      if (shouldFetchOnMount && canLoadMore && pagesCount == 0) {
+      if (shouldFetchOnMount && canLoadMore && pagesCount === 0) {
         fetchData(fetchParams);
       } else {
         this.setState({ pagesCount });
@@ -49,7 +49,7 @@ export function withListableData(WrappedComponent) {
       return <WrappedComponent
         { ...this.props }
         ref={ this.wrappedRef }
-        pagination={ this.state }
+        pagesCount={ this.state.pagesCount }
         listableItems={ this.listableItems } />;
     }
   }

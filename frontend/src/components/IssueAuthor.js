@@ -1,7 +1,7 @@
 import React from 'react';
 import { formatDateTime } from '../utils/datetime';
 
-export default function IssueAuthor(props) {
+const IssueAuthor = React.memo((props) => {
   return (
     <>
       <span>opened on </span>
@@ -10,4 +10,6 @@ export default function IssueAuthor(props) {
       <strong>{ props.issue.author }</strong>
     </>
   );
-}
+});
+
+export default IssueAuthor;

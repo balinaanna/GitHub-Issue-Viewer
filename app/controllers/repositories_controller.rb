@@ -32,6 +32,7 @@ class RepositoriesController < ApplicationController
       id: repo.id,
       name: repo.name,
       full_name: repo.full_name,
+      has_issues: repo.has_issues,
       private: repo.private,
       url: repo.html_url,
       description: repo.description,

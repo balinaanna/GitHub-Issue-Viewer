@@ -2,12 +2,34 @@ import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { fetchRepositories } from '../actions';
-import { PER_PAGE } from '../utils/constants';
 import LoadMoreButton from './LoadMoreButton';
 import LoadingIndicator from './LoadingIndicator';
 import { withListableData } from './withListableData';
 
-class RepositoriesList extends React.Component {
+const Repo = React.memo((props) => {
+  const { repo } = props;
+  return (
+    <div role='listitem' className='item'>
+      <i className='folder outline large icon'></i>
+      <Link to={ `/${repo.owner}/${repo.name}` } className='content'>
+        <div className='header'>
+          <span style={{ marginRight: '1em' }}>
+            { repo.fullName }
+          </span>
+          {
+            repo.isPrivate ?
+              <span className='ui horizontal label'>
+                Private
+              </span>
+            : null
+          }
+        </div>
+      </Link>
+    </div>
+  );
+});
+
+class RepositoriesList extends React.PureComponent {
   renderNavigation() {
     return (
       <div className='ui breadcrumb fixed secondary menu'>
@@ -30,32 +52,13 @@ class RepositoriesList extends React.Component {
     }
 
     return this.props.listableItems(repos).map(repo => {
-      return (
-        <div role='listitem' className='item' key={repo.id}>
-          <i className='folder outline large icon'></i>
-          <Link to={ `/${repo.owner}/${repo.name}` } className='content'>
-            <div className='header'>
-              <span style={{marginRight: '1em'}}>
-                { repo.fullName }
-              </span>
-              {
-                repo.isPrivate ?
-                  <span className='ui horizontal label'>
-                    Private
-                  </span>
-                : null
-              }
-            </div>
-            <div className='description'>{ repo.description }</div>
-          </Link>
-        </div>
-      );
+      return <Repo repo={ repo } key={ repo.id } />;
     });
   }
 
   render() {
     const {
-      data: { items, canLoadMore }, pagination: { pagesCount }, fetchData, isLoading, renderError
+      data: { items, canLoadMore }, pagesCount, fetchData, isLoading, renderError
     } = this.props;
 
     return (
@@ -80,9 +83,7 @@ class RepositoriesList extends React.Component {
 }
 
 const mapStateToProps = state => {
-  return {
-    data: state.repositories
-  }
+  return { data: state.repositories };
 }
 
 export default connect(

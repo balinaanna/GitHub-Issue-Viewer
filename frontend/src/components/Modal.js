@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-export default class Modal extends React.Component {
+export default class Modal extends React.PureComponent {
   constructor(props) {
     super(props);
 
     const element = document.createElement('div');
-    element.id = 'modal';
+    element.className = 'fullscreen';
     this.el = element;
   }
 

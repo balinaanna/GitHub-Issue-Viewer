@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Message(props) {
+const Message = React.memo((props) => {
   let { className, content, ...otherProps } = props;
   const classNames = ['ui message container', className].join(' ');
 
@@ -12,4 +12,6 @@ export default function Message(props) {
       <p>{ content.text }</p>
     </div>
   );
-}
+});
+
+export default Message;

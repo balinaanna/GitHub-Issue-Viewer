@@ -1,15 +1,23 @@
 import React from 'react';
 
-export default function LoadingIndicator(props) {
+const LoadingIndicator = React.memo((props) => {
+  const defaultContent = 'Loading...';
+
+  const { content = defaultContent, ...otherProps } = props;
+
+  let { className } = props;
+  const classNames = ['ui icon message', className].join(' ');
+
   return (
-    <div className='load-more'>
-      <div className='ui icon message'>
+    <div { ...otherProps } className='loading-indicator'>
+      <div className={ classNames }>
         <i className='circle notched loading icon'></i>
         <div className='content'>
-          <div className='header'>Just one second</div>
-          We are fetching that content for you.
+          <div className='header'>{ content }</div>
         </div>
       </div>
    </div>
   );
-}
+});
+
+export default LoadingIndicator;

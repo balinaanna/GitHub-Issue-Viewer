@@ -1,7 +1,6 @@
 import React from 'react';
-import LoadingIndicator from './LoadingIndicator';
 
-export default function LoadMoreButton(props) {
+const LoadMoreButton = React.memo((props) => {
   if (props.canLoadMore === false || !!props.isLoading) { return null };
 
   return (
@@ -11,4 +10,6 @@ export default function LoadMoreButton(props) {
       </button>
     </div>
   );
-}
+});
+
+export default LoadMoreButton;
