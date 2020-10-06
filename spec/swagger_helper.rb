@@ -23,6 +23,13 @@ RSpec.configure do |config|
       },
       paths: {},
       components: {
+        securitySchemes: {
+          jwt: {
+            type: :http,
+            scheme: :bearer,
+            bearerFormat: 'JWT',
+          }
+        },
         schemas: {
           repo: {
             type: :object,
@@ -50,14 +57,15 @@ RSpec.configure do |config|
               created_at: { type: :string, format: 'date-time' }
             },
             required: %w[id title number author body state created_at]
+          },
+          error: {
+            type: :object,
+            properties: {
+              title: { type: :string },
+              detail: { type: :string }
+            },
+            required: %w[title detail]
           }
-        }
-      },
-      securitySchemes: {
-        jwt: {
-          type: :http,
-          scheme: :bearer,
-          bearerFormat: 'JWT',
         }
       },
       servers: [

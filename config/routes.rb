@@ -2,7 +2,7 @@ Rails.application.routes.draw do
 
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
   get '/auth/github', to: 'github#authorize'
-  get '/auth/github/callback', to: 'github#callback'
+  resources :sessions, only: [:create]
 
   get '/repos', to: 'repositories#index'
   get '/repos/:owner/:repo', to: 'repositories#show'

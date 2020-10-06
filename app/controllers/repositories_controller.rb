@@ -1,25 +1,38 @@
 class RepositoriesController < ApplicationController
-  def index
-    begin
-      response = github.repos.list per_page: params[:per_page] || 10, page: params[:page] || 1, sort: :created
-      repos = response.body.map { |repo| mapRepoFromResponse(repo) }
+  before_action :authenticate_user
 
-      render json: { data: repos }
-    rescue Github::Error::GithubError => e
-      puts e.message
-      if e.is_a? Github::Error::ServiceError
-        # handle GitHub service errors such as 404
-      elsif e.is_a? Github::Error::ClientError
-        # handle client errors e.i. missing required parameter in request
-      end
-    end
+  def index
+    response = current_user.github.repos.list per_page: params[:per_page] || 10, page: params[:page] || 1, sort: :created
+    repos = response.body.map { |repo| mapRepoFromResponse(repo) }
+
+    render json: { data: repos }
+
+  rescue Github::Error::ServiceError => e
+    github_error = JSON.parse e.response_message
+
+    status = e.http_status_code == 401 ? 403 : e.http_status_code
+    detail = "You are not authorized to list the repos. Please sign in with Github."
+    error  = { title: github_error['message'], detail: detail }
+
+    render status: status, json: { error: error }
+  rescue Github::Error::ClientError => e
+    # handle client errors e.i. missing required parameter in request
   end
 
   def show
-    response = github.repos.get user: params[:owner], repo: params[:repo]
+    response = current_user.github.repos.get user: params[:owner], repo: params[:repo]
     repo = response.body
 
     render json: { data: mapRepoFromResponse(repo) }
+
+  rescue Github::Error::GithubError => e
+    github_error = JSON.parse e.response_message
+
+    status = e.http_status_code == 401 ? 403 : e.http_status_code
+    detail = "Repo '#{params[:owner]}/#{params[:repo]}' can not be displyed. It might be no longer available or private"
+    error  = { title: github_error['message'], detail: detail }
+
+    render status: status, json: { error: error }
   end
 
   private

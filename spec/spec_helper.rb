@@ -1,5 +1,5 @@
 require 'webmock/rspec'
-require 'support/github_api_helper'
+require 'support/helpers/github_api_helper'
 
 WebMock.disable_net_connect!(allow_localhost: true)
 
@@ -83,5 +83,4 @@ RSpec.configure do |config|
   # as the one that triggered the failure.
   Kernel.srand config.seed
 =end
-  config.include GithubApiHelper, type: :request
 end

@@ -1,13 +1,9 @@
 class ApplicationController < ActionController::API
+  include Knock::Authenticable
+
   protected
-
-  def github
-    authenticated = true
-
-    connection_params = authenticated ?
-      { oauth_token: '' } :
-      { client_id: ENV['GITHUB_CLIENT_ID'], client_secret: ENV['GITHUB_CLIENT_SECRET'] }
-
-    @github ||= Github.new connection_params
+  def unauthorized_entity(entity_name)
+    e = Errors::Unauthorized.new
+    render json: ErrorSerializer.new(e), status: e.status
   end
 end
