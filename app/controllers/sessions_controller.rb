@@ -5,7 +5,7 @@ class SessionsController < Knock::AuthTokenController
     begin
       authenticate      
     rescue OAuth2::Error => e
-      raise Errors::Unauthorized.new error: e.description
+      raise Errors::Unauthorized.new detail: e.description
     end
 
     render json: { data: { token: auth_token.token } }
@@ -26,7 +26,7 @@ class SessionsController < Knock::AuthTokenController
     params.require(:code)
     params.require(:session).permit :code
   rescue ActionController::ParameterMissing => e
-    raise Errors::InvalidRequest.new error: "Request is invalid -  #{e.message}"
+    raise Errors::InvalidRequest.new detail: "Request is invalid -  #{e.message}"
   end
 
   def user

@@ -1,10 +1,10 @@
 module Errors
   class Unauthorized < Errors::StandardError
-    def initialize(error: nil)
+    def initialize(title: nil, detail: nil)
       super(
-        title: 'Unauthorized',
         status: 401,
-        detail: error || 'You need to login to authorize this request.',
+        title: title || 'Unauthorized',
+        detail: detail || 'You need to login to authorize this request.',
       )
     end
   end

@@ -8,13 +8,8 @@ class RepositoriesController < ApplicationController
     render json: { data: repos }
 
   rescue Github::Error::ServiceError => e
-    github_error = JSON.parse e.response_message
-
-    status = e.http_status_code == 401 ? 403 : e.http_status_code
-    detail = "You are not authorized to list the repos. Please sign in with Github."
-    error  = { title: github_error['message'], detail: detail }
-
-    render status: status, json: { error: error }
+    message = "You are not authorized to list the repos. Please sign in with Github."
+    show_github_service_error(e, message)
   rescue Github::Error::ClientError => e
     # handle client errors e.i. missing required parameter in request
   end
@@ -26,13 +21,8 @@ class RepositoriesController < ApplicationController
     render json: { data: mapRepoFromResponse(repo) }
 
   rescue Github::Error::GithubError => e
-    github_error = JSON.parse e.response_message
-
-    status = e.http_status_code == 401 ? 403 : e.http_status_code
-    detail = "Repo '#{params[:owner]}/#{params[:repo]}' can not be displyed. It might be no longer available or private"
-    error  = { title: github_error['message'], detail: detail }
-
-    render status: status, json: { error: error }
+    message = "Repo '#{params[:owner]}/#{params[:repo]}' can not be displyed. It might be no longer available or private"
+    show_github_service_error(e, message)
   end
 
   private

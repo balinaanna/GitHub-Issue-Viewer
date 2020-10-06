@@ -1,10 +1,10 @@
 module Errors
   class InvalidRequest < Errors::StandardError
-    def initialize(error: )
+    def initialize(detail: nil)
       super(
-        title: 'Unprocessable Entity',
         status: 422,
-        detail: error || 'Request is invalid'
+        title: 'Unprocessable Entity',
+        detail: detail || 'Request is invalid'
       )
     end
   end

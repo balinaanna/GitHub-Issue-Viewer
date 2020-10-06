@@ -15,13 +15,8 @@ class IssuesController < ApplicationController
 
       render json: { data: issues }
     rescue Github::Error::GithubError => e
-      github_error = JSON.parse e.response_message
-
-      status = e.http_status_code == 401 ? 403 : e.http_status_code
-      detail = "Repo '#{params[:owner]}/#{params[:repo]}' can not be displyed. It might be no longer available or private"
-      error  = { title: github_error['message'], detail: detail }
-
-      render status: status, json: { error: error }
+      message = "Repo '#{params[:owner]}/#{params[:repo]}' can not be displyed. It might be no longer available or private"
+      show_github_service_error(e, message)
   end
 
   def show
@@ -30,13 +25,8 @@ class IssuesController < ApplicationController
 
       render json: { data: mapIssueFromResponse(issue) }
     rescue Github::Error::GithubError => e
-      github_error = JSON.parse e.response_message
-
-      status = e.http_status_code == 401 ? 403 : e.http_status_code
-      detail = "Issue #{params[:number]} in '#{params[:owner]}/#{params[:repo]}' can not be displyed. It might be no longer available or private"
-      error  = { title: github_error['message'], detail: detail }
-
-      render status: status, json: { error: error }
+      message = "Issue #{params[:number]} in '#{params[:owner]}/#{params[:repo]}' can not be displyed. It might be no longer available or private"
+      show_github_service_error(e, message)
   end
 
   private
