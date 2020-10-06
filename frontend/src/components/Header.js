@@ -8,7 +8,7 @@ const Header = () => {
       <div className='ui container'>
         <div className='left menu'>
           <Link to='/' className='header item'>
-            <i className="github large icon"></i>
+            <i className='github large icon'></i>
             <span>Github Issue Viewer</span>
           </Link>
         </div>

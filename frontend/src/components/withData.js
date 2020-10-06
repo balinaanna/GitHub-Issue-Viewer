@@ -16,7 +16,6 @@ export const withData = ({ shouldFetchOnMount = true } = {}) => (WrappedComponen
     }
 
     componentDidMount() {
-      console.log('withData mount', this.props);
       if (!shouldFetchOnMount) { return };
 
       const { data } = this.props;
