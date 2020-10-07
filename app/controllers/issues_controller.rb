@@ -10,7 +10,7 @@ class IssuesController < ApplicationController
       })
 
       issues = response.body
-        # .select { |issue| !issue.key? :pull_request }
+        .select { |issue| !issue.key? :pull_request }
         .map { |issue| mapIssueFromResponse(issue) }
 
       render json: { data: issues }
