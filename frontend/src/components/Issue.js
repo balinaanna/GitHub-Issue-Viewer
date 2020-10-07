@@ -53,7 +53,7 @@ class Issue extends React.PureComponent {
   }
 
   render() {
-    const { data, isLoading, renderError } = this.props;
+    const { data, isLoading } = this.props;
     const { repoOwner, repoName, number } = this.props.match.params;
 
     return (
@@ -61,7 +61,6 @@ class Issue extends React.PureComponent {
         { this.renderNavigation(repoOwner, repoName) }
         { this.renderIssue(data, number) }
         { isLoading ? <LoadingIndicator /> : null }
-        { renderError() }
       </div>
     );
   }
@@ -73,7 +72,8 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     data: state.issues[repoId],
-    fetchParams: { repoOwner, repoName, number }
+    fetchParams: { repoOwner, repoName, number },
+    appState: state.appState,
   };
 }
 

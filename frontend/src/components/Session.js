@@ -10,28 +10,22 @@ class Session extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      queryParams: {}
+      error: undefined
     }
   }
+
   componentDidMount() {
     const { location: { search}, fetchData } = this.props;
     const queryParams = queryString.parse(search);
-    const { code } = queryParams;
+    const { code, error } = queryParams;
 
-    if (code) {
-      this.props.fetchData({ code });
-    } else {
-      this.setState({ queryParams });
-    }
+    if (error) { this.setState({ error }) }
+    if (code) { this.props.fetchData({ code }) }
   }
 
   render() {
-    if (this.props.session.token) {
+    if (this.props.session.token || this.state.error) {
       return <Redirect to='/' />
-    }
-
-    if (this.state.queryParams.error) {
-      return <Redirect to='/' />;
     }
 
     return (
@@ -43,15 +37,17 @@ class Session extends React.PureComponent {
             </div>
           </div>
         : null }
-        { this.props.renderError() }
       </>
     );
   }
 }
 
 export default connect(
-  (state, ownProps) => {
-    return {session: state.session };
+  (state) => {
+    return {
+      session: state.session,
+      appState: state.appState
+    };
   },
   { fetchData: createSession }
 )(withData({ shouldFetchOnMount: false })(Session));

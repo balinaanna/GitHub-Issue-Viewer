@@ -41,6 +41,13 @@
   padding-top: inherit;
   z-index: 10000;
   opacity: 0.95;
+  pointer-events: none;
+}
+.fullscreen .message {
+  pointer-events: all;
+}
+.button.authorize {
+  margin-top: 6em;
 }
 
 @media only screen and (max-width: 767px) {

@@ -58,7 +58,7 @@ class RepositoriesList extends React.PureComponent {
 
   render() {
     const {
-      data: { items, canLoadMore }, pagesCount, fetchData, isLoading, renderError
+      data: { items, canLoadMore }, pagesCount, fetchData, isLoading
     } = this.props;
 
     return (
@@ -75,15 +75,16 @@ class RepositoriesList extends React.PureComponent {
           isLoading={ isLoading }
         />
         { isLoading ? <LoadingIndicator /> : null }
-
-        { renderError() }
       </div>
     );
   }
 }
 
-const mapStateToProps = state => {
-  return { data: state.repositories };
+const mapStateToProps = (state, ownProps) => {
+  return {
+    data: state.repositories,
+    appState: state.appState,
+  };
 }
 
 export default connect(

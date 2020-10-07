@@ -53,7 +53,7 @@ class Repository extends React.PureComponent {
   render() {
     const {
       data: { items, canLoadMore } = {items: {}, canLoadMore: true},
-      pagesCount, fetchData, isLoading, renderError
+      pagesCount, fetchData, isLoading
     } = this.props;
 
     const { repoOwner, repoName } = this.props.match.params;
@@ -72,8 +72,6 @@ class Repository extends React.PureComponent {
           isLoading={ isLoading }
         />
         { isLoading ? <LoadingIndicator /> : null }
-
-        { renderError() }
       </div>
     );
   }
@@ -87,7 +85,8 @@ const mapStateToProps = (state, ownProps) => {
   return {
     data: state.issues[repoId],
     fetchParams: { repoOwner, repoName },
-    shouldFetchOnMount: (repo && repo.hasIssues)
+    shouldFetchOnMount: (repo && repo.hasIssues),
+    appState: state.appState
   }
 }
 

@@ -3,7 +3,7 @@ import { Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { SET_ACCESS_TOKEN } from '../actions/types';
 import Header from './Header';
-import Root from './Root';
+import UnauthorizedRoot from './UnauthorizedRoot';
 
 function PrivateRoute({ component: Component, ...rest }) {
   let { session: { token }, dispatch } = rest;
@@ -20,22 +20,17 @@ function PrivateRoute({ component: Component, ...rest }) {
     }
   }
 
-  return (
-    <Route { ...rest } render={ props => {
-      if (!!token || !!persistedToken) {
-        return <>
-          <Header { ...props } />
-          <Component { ...props } />
-        </>;
-      }
-
-      if (rest.location.pathname === '/') {
-        return <Root />;
-      } else {
-        return <Redirect to='/' />;
-      }
-    }} />
-  );
+  return <Route render={ (props) => {
+    return ((!!token || !!persistedToken)
+        ? <>
+            <Header { ...rest } { ...props } />
+            <Component { ...rest } { ...props } />
+          </>
+        : (rest.location.pathname === '/')
+          ? <UnauthorizedRoot { ...rest } />
+          : <Redirect to='/' />
+      )} }
+    { ...rest } />;
 }
 
 export default connect(

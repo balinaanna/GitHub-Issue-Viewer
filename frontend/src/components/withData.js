@@ -1,8 +1,7 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
-import Modal from './Modal';
-import Message from './Message';
 import { getHocDisplayName } from '../utils/constants';
+import { SET_ERROR, UNSET_ERROR, DELETE_SESSION } from '../actions/types';
+import { withError } from './withError';
 
 export const withData = ({ shouldFetchOnMount = true } = {}) => (WrappedComponent) => {
   class WithData extends React.PureComponent {
@@ -11,7 +10,7 @@ export const withData = ({ shouldFetchOnMount = true } = {}) => (WrappedComponen
 
       this.state = {
         isLoading: false,
-        error: undefined
+        errorTimeout: undefined
       };
 
       this.wrappedRef = React.createRef();
@@ -22,6 +21,12 @@ export const withData = ({ shouldFetchOnMount = true } = {}) => (WrappedComponen
 
       if (!this.props.data) {
         this.fetchData(this.props.fetchParams);
+      }
+    }
+
+    componentWillUnmount = () => {
+      if (this.state.errorTimeout) {
+        clearTimeout(this.state.errorTimeout)
       }
     }
 
@@ -38,60 +43,49 @@ export const withData = ({ shouldFetchOnMount = true } = {}) => (WrappedComponen
             this.wrappedRef.current.onFetchSuccess &&
             this.wrappedRef.current.onFetchSuccess(result);
         },
+
         (error) => {
-          this.setState({ isLoading: false });
-          this.showError(error);
+          const errorTimeout = setTimeout(() => {
+            this.setState({ errorTimeout: undefined });
+            this.props.dispatch({ type: UNSET_ERROR });
+          }, 3000);
+
+          this.setState({ isLoading: false, errorTimeout });
+
+          const { response } = error;
+          let header, text, status;
+
+          if (response) {
+            header = response.data.error.title;
+            text = response.data.error.detail;
+            status = response.status;
+          } else {
+            header = error.message;
+            text = 'Try again later.';
+          }
+
+          const errorContent = { header, text };
+
+          if ([401, 403].includes(status)) {
+            window.localStorage.removeItem('token');
+            this.props.dispatch({ type: DELETE_SESSION });
+          }
+
+          this.props.dispatch({ type: SET_ERROR, payload: errorContent });
         }
        );
-    }
-
-    showError = (error) => { this.setState({ error }) }
-    hideError = () => { this.setState({ error: undefined }) }
-
-    renderError = () => {
-      const { error } = this.state;
-      if (!error) { return null };
-
-      const { response } = error;
-      let header, text, status;
-
-      if (response) {
-        header = response.data.error.title;
-        text = response.data.error.detail;
-        status = response.status;
-
-        if ([401, 403].includes(status)) {
-          return <Redirect to='/' />;
-        }
-      } else {
-        header = error.message;
-        text = 'Try again later.'
-      }
-
-      const errorContent = { header, text };
-
-      return (
-        <Modal>
-          <div className='page-wrapper' onClick={ this.hideError } >
-            <Message className='negative' content={ errorContent } />
-          </div>
-        </Modal>
-      );
     }
 
     render() {
       return <WrappedComponent
         { ...this.props }
         ref={ this.wrappedRef }
-        error={ this.state.error }
         isLoading={ this.state.isLoading }
-        renderError={ this.renderError }
-        fetchData={ this.fetchData }
-        showError={ this.showError } />;
+        fetchData={ this.fetchData } />;
     }
   }
 
   WithData.displayName = `WithData(${getHocDisplayName(WrappedComponent)})`;
 
-  return WithData;
+  return withError(WithData);
 }
