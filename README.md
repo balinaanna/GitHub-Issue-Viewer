@@ -33,10 +33,9 @@ github:
   client_secret: ‘your_github_client_secret’
 ```
 
-If you get any errors remove existing config files before generating the new ones:
+If you get any errors remove existing config file before generating the new one:
 ```sh
 rm config/credentials.yml.enc
-rm config/master.key
 ```
 
 #### Start the app
