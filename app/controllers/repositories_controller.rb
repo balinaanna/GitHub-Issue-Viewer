@@ -21,7 +21,7 @@ class RepositoriesController < ApplicationController
     render json: { data: mapRepoFromResponse(repo) }
 
   rescue Github::Error::GithubError => e
-    message = "Repo '#{params[:owner]}/#{params[:repo]}' can not be displyed. It might be no longer available or private"
+    message = "Repo '#{params[:owner]}/#{params[:repo]}' can not be displayed. It might be no longer available or private"
     show_github_service_error(e, message)
   end
 

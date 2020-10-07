@@ -9,7 +9,9 @@ class User
   end
 
   def authenticate(code)
-    @github ||= Github.new client_id: ENV['GITHUB_CLIENT_ID'], client_secret: ENV['GITHUB_CLIENT_SECRET']
+    @github ||= Github.new(
+      client_id:     Rails.application.credentials.github[:client_id],
+      client_secret: Rails.application.credentials.github[:client_secret])
 
     authorization_code = code
     @github_token = github.get_token(authorization_code).token

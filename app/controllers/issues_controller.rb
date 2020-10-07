@@ -15,7 +15,7 @@ class IssuesController < ApplicationController
 
       render json: { data: issues }
     rescue Github::Error::GithubError => e
-      message = "Repo '#{params[:owner]}/#{params[:repo]}' can not be displyed. It might be no longer available or private"
+      message = "Repo '#{params[:owner]}/#{params[:repo]}' can not be displayed. It might be no longer available or private"
       show_github_service_error(e, message)
   end
 
@@ -25,7 +25,7 @@ class IssuesController < ApplicationController
 
       render json: { data: mapIssueFromResponse(issue) }
     rescue Github::Error::GithubError => e
-      message = "Issue #{params[:number]} in '#{params[:owner]}/#{params[:repo]}' can not be displyed. It might be no longer available or private"
+      message = "Issue #{params[:number]} in '#{params[:owner]}/#{params[:repo]}' can not be displayed. It might be no longer available or private"
       show_github_service_error(e, message)
   end
 
