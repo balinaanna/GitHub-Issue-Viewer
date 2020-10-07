@@ -10,7 +10,6 @@ export function withListableData(WrappedComponent) {
       this.state = {
         pagesCount: 0
       }
-      this.wrappedRef = React.createRef();
     }
 
     componentDidMount() {
@@ -48,7 +47,6 @@ export function withListableData(WrappedComponent) {
     render() {
       return <WrappedComponent
         { ...this.props }
-        ref={ this.wrappedRef }
         pagesCount={ this.state.pagesCount }
         listableItems={ this.listableItems } />;
     }
