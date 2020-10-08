@@ -1,4 +1,6 @@
 class User
+  attr_reader :github_token
+
   def initialize(github_token)
     @github_token = github_token
     @github = nil
@@ -25,10 +27,6 @@ class User
 
   def self.from_token_payload(payload)
     User.new(payload['github_token'])
-  end
-
-  def github_token
-    @github_token
   end
 
   def to_token_payload

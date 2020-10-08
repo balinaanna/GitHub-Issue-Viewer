@@ -11,7 +11,8 @@ class RepositoriesController < ApplicationController
     message = "You are not authorized to list the repos. Please sign in with Github."
     show_github_service_error(e, message)
   rescue Github::Error::ClientError => e
-    # handle client errors e.i. missing required parameter in request
+    Rails.logger.info "Github request errror: #{e.message}"
+    raise StandardError < ::StandardError.new
   end
 
   def show
