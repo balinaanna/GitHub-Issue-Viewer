@@ -7,13 +7,11 @@ class User
   end
 
   def github
-    @github ||= Github.new oauth_token: @github_token
+    @github ||= GithubApi.new github_token
   end
 
   def authenticate(code)
-    @github ||= Github.new(
-      client_id:     Rails.application.credentials.github[:client_id],
-      client_secret: Rails.application.credentials.github[:client_secret])
+    @github ||= GithubApi.new
 
     authorization_code = code
     @github_token = github.get_token(authorization_code).token
@@ -30,6 +28,6 @@ class User
   end
 
   def to_token_payload
-    { github_token: @github_token }
+    { github_token: github_token }
   end
 end
