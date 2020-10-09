@@ -44,7 +44,7 @@ describe 'Repos API' do
   end
 
   path '/repos/{owner}/{repo}' do
-    get 'Retrieves a repo by Owner' do
+    get 'Retrieves a GitHub repo by Owner' do
       tags 'Repos'
       produces 'application/json'
       security [ jwt: [] ]

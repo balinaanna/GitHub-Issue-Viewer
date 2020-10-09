@@ -65,7 +65,7 @@ describe 'Issues API' do
   end
 
   path '/repos/{owner}/{repo}/issues/{number}' do
-    get 'Retrieves a repo by Owner' do
+    get 'Retrieves a GitHub issue by Repo and it\'s Owner' do
       tags 'Issues'
       produces 'application/json'
       security [ jwt: [] ]
