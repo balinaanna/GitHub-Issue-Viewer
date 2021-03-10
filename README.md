@@ -15,8 +15,10 @@ cd frontend && npm install
 #### Register a [GitHub OAuth app](https://docs.github.com/en/free-pro-team@latest/rest/guides/basics-of-authentication#registering-your-app).
 
 Set the following values:
-**Homepage URL** = `http://localhost:3001/`
-**Authorization callback URL** = `http://localhost:3001/auth`
+
+> **Homepage URL** = `http://localhost:3001/`
+> 
+> **Authorization callback URL** = `http://localhost:3001/auth`
 
 Get your **Client ID** and **Client Secret**. You'll need them at the next step.
 
